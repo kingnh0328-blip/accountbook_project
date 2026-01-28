@@ -17,6 +17,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     
+    'django.contrib.humanize', #숫자에,찍어주는app (예시 1,000원)
+    
     # 앱
     'accounts',
     'transactions',
