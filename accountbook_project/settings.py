@@ -1,10 +1,15 @@
 from pathlib import Path
-
+import os
 BASE_DIR = Path(__file__).resolve().parent.parent
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 SECRET_KEY = 'django-insecure-yoy9x$$s_w@tk=ja1nz!@je0g=1dm32@y1zz5w45iy3v9g4r70'
 
-DEBUG = True
+
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = []
 
@@ -57,12 +62,15 @@ WSGI_APPLICATION = 'accountbook_project.wsgi.application'
 
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+"default": {
+"ENGINE":"django.db.backends.postgresql",
+"NAME": os.getenv("DB_NAME"),
+"USER": os.getenv("DB_USER"),
+"PASSWORD": os.getenv("DB_PASSWORD"),
+"HOST": os.getenv("DB_HOST"),
+"PORT": os.getenv("DB_PORT"),
     }
 }
-
 
 AUTH_PASSWORD_VALIDATORS = [
     {
