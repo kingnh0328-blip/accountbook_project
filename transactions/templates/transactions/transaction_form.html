@@ -1,0 +1,77 @@
+<!-- transactions/templates/transactions/transaction_form.html -->
+{% extends 'base.html' %}
+
+{% block title %}거래 {% if object %}수정{% else %}생성{% endif %} - AccountBook{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <h2>거래 {% if object %}수정{% else %}생성{% endif %}</h2>
+        
+        <form method="post" class="mt-4">
+            {% csrf_token %}
+            
+            <div class="mb-3">
+                <label for="{{ form.account.id_for_label }}" class="form-label">계좌</label>
+                {{ form.account }}
+                {% if form.account.errors %}
+                    <div class="text-danger">{{ form.account.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="mb-3">
+                <label for="{{ form.tx_type.id_for_label }}" class="form-label">거래 타입</label>
+                {{ form.tx_type }}
+                {% if form.tx_type.errors %}
+                    <div class="text-danger">{{ form.tx_type.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="mb-3">
+                <label for="{{ form.amount.id_for_label }}" class="form-label">금액</label>
+                {{ form.amount }}
+                {% if form.amount.errors %}
+                    <div class="text-danger">{{ form.amount.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="mb-3">
+                <label for="{{ form.occurred_at.id_for_label }}" class="form-label">거래일시</label>
+                {{ form.occurred_at }}
+                {% if form.occurred_at.errors %}
+                    <div class="text-danger">{{ form.occurred_at.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="mb-3">
+                <label for="{{ form.category.id_for_label }}" class="form-label">카테고리</label>
+                {{ form.category }}
+                {% if form.category.errors %}
+                    <div class="text-danger">{{ form.category.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="mb-3">
+                <label for="{{ form.merchant.id_for_label }}" class="form-label">가맹점/거래처</label>
+                {{ form.merchant }}
+                {% if form.merchant.errors %}
+                    <div class="text-danger">{{ form.merchant.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="mb-3">
+                <label for="{{ form.memo.id_for_label }}" class="form-label">메모</label>
+                {{ form.memo }}
+                {% if form.memo.errors %}
+                    <div class="text-danger">{{ form.memo.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">저장</button>
+                <a href="{% url 'transactions:transaction_list' %}" class="btn btn-secondary">취소</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

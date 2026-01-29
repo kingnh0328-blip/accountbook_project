@@ -4,5 +4,5 @@ from . import views
 app_name = 'dashboard'
 
 urlpatterns = [
-    # 나중에 추가
+    path('', views.DashboardView.as_view(), name='dashboard'),
 ]

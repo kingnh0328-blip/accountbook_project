@@ -1,0 +1,117 @@
+<!-- dashboard/templates/dashboard/dashboard.html -->
+{% extends 'base.html' %}
+
+{% block title %}대시보드 - AccountBook{% endblock %}
+
+{% block content %}
+<h2>대시보드</h2>
+
+<!-- 월 선택 -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3 align-items-end">
+            <div class="col-auto">
+                <label for="month" class="form-label">조회 월</label>
+                <input type="month" name="month" id="month" class="form-control" 
+                       value="{{ year }}-{{ month|stringformat:'02d' }}">
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary">조회</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 월별 요약 -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <h5 class="card-title">총 수입</h5>
+                <h3>{{ total_income|floatformat:0 }}원</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-danger">
+            <div class="card-body">
+                <h5 class="card-title">총 지출</h5>
+                <h3>{{ total_expense|floatformat:0 }}원</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white {% if net_amount >= 0 %}bg-primary{% else %}bg-warning{% endif %}">
+            <div class="card-body">
+                <h5 class="card-title">순합</h5>
+                <h3>{{ net_amount|floatformat:0 }}원</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 카테고리별 지출 -->
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">카테고리별 지출 Top 5</h5>
+        
+        {% if category_summary %}
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>카테고리</th>
+                            <th>금액</th>
+                            <th>건수</th>
+                            <th width="40%">비율</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in category_summary %}
+                        <tr>
+                            <td>{{ item.category__name }}</td>
+                            <td>{{ item.total|floatformat:0 }}원</td>
+                            <td>{{ item.count }}건</td>
+                            <td>
+                                <!-- CSS 막대 그래프 -->
+                                <div class="progress">
+                                    <div class="progress-bar" role="progressbar" 
+                                         style="width: {% widthratio item.percentage 1 1 %}%;"
+                                         aria-valuenow="{{ item.percentage }}" 
+                                         aria-valuemin="0" 
+                                         aria-valuemax="100">
+                                        {{ item.expense_ratio|floatformat:1 }}%
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="text-muted">이번 달 지출 내역이 없습니다.</p>
+        {% endif %}
+    </div>
+</div>
+
+<!-- 빠른 링크 -->
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body text-center">
+                <h5>거래 추가</h5>
+                <a href="{% url 'transactions:transaction_create' %}" class="btn btn-primary">+ 새 거래</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body text-center">
+                <h5>전체 내역</h5>
+                <a href="{% url 'transactions:transaction_list' %}" class="btn btn-secondary">거래 내역 보기</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

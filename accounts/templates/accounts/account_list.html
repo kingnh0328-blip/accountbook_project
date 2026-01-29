@@ -1,0 +1,36 @@
+<!-- accounts/templates/accounts/account_list.html -->
+{% extends 'base.html' %}
+
+{% block title %}계좌 목록 - AccountBook{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>내 계좌 목록</h2>
+    <a href="{% url 'accounts:account_create' %}" class="btn btn-primary">+ 계좌 추가</a>
+</div>
+
+{% if accounts %}
+    <div class="row">
+        {% for account in accounts %}
+        <div class="col-md-4 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ account.name }}</h5>
+                    <p class="card-text">
+                        <strong>은행:</strong> {{ account.bank_name }}<br>
+                        <strong>계좌번호:</strong> {{ account.masked_account_number }}<br>
+                        <strong>잔액:</strong> {{ account.balance|floatformat:0 }}원
+                    </p>
+                    <a href="{% url 'accounts:account_detail' account.pk %}" class="btn btn-sm btn-outline-primary">상세보기</a>
+                    <a href="{% url 'accounts:account_update' account.pk %}" class="btn btn-sm btn-outline-secondary">수정</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="alert alert-info">
+        등록된 계좌가 없습니다. 첫 계좌를 추가해보세요!
+    </div>
+{% endif %}
+{% endblock %}
