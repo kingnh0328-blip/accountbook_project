@@ -35,6 +35,7 @@ class Category(models.Model):
         default='BOTH',
         verbose_name='타입'
     )
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
     
     class Meta:
         verbose_name = '카테고리'
@@ -50,7 +51,13 @@ class Transaction(models.Model):
     - 계좌에서 발생한 입금/출금 기록
     - 프로젝트의 핵심 비즈니스 데이터
     """
+    def income(self):
+        """수입(입금) 거래만 필터링"""
+        return self.filter(tx_type='IN')
     
+    def expense(self):
+        """지출(출금) 거래만 필터링"""
+        return self.filter(tx_type='OUT')
     # 거래 타입 선택지
     TX_TYPE_CHOICES = [
         ('IN', '입금'),

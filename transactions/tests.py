@@ -73,21 +73,21 @@ class TransactionModelTest(TestCase):
         self.assertEqual(self.transaction.amount, Decimal('5000'))
         self.assertEqual(self.transaction.merchant, '스타벅스')
     
-    def test_signed_amount(self):
-        """부호 포함 금액 테스트"""
-        # 지출
-        self.assertEqual(self.transaction.signed_amount, Decimal('-5000'))
-        
-        # 수입
-        income = Transaction.objects.create(
-            user=self.user,
-            account=self.account,
-            tx_type='IN',
-            amount=Decimal('10000'),
-            occurred_at=datetime.now(),
-            merchant='월급'
-        )
-        self.assertEqual(income.signed_amount, Decimal('10000'))
+def test_signed_amount(self):
+    """부호 포함 금액 테스트"""
+    # 지출
+    self.assertEqual(self.transaction.signed_amount, Decimal('-5000'))
+    
+    # 수입
+    income = Transaction.objects.create(
+        user=self.user,
+        account=self.account,
+        tx_type='IN',
+        amount=Decimal('10000'),
+        occurred_at=datetime.now(),
+        merchant='월급'
+    )
+    self.assertEqual(income.signed_amount, Decimal('10000'))
     
     def test_transaction_manager_income(self):
         """수입 필터 테스트"""
