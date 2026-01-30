@@ -1,1 +1,409 @@
 /* 거래 관리 */
+/* static/css/transactions.css */
+
+/* ==========================================
+   1. 거래 목록 레이아웃
+   ========================================== */
+
+.transaction-list-container {
+    padding: 30px 0;
+}
+
+.transaction-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.transaction-list-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #333;
+}
+
+/* ==========================================
+   2. 필터 섹션
+   ========================================== */
+
+.transaction-filter-card {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.transaction-filter-form {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    align-items: end;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.filter-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: #495057;
+    margin-bottom: 5px;
+}
+
+.filter-input,
+.filter-select {
+    padding: 8px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.filter-input:focus,
+.filter-select:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.filter-btn {
+    padding: 8px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.filter-btn:hover {
+    background-color: #0056b3;
+}
+
+/* ==========================================
+   3. 거래 테이블
+   ========================================== */
+
+.transaction-table-container {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    overflow-x: auto;
+}
+
+.transaction-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.transaction-table thead {
+    background-color: #f8f9fa;
+}
+
+.transaction-table th {
+    padding: 15px 10px;
+    text-align: left;
+    font-weight: 600;
+    color: #495057;
+    font-size: 14px;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.transaction-table td {
+    padding: 15px 10px;
+    font-size: 14px;
+    color: #333;
+    border-bottom: 1px solid #f1f1f1;
+}
+
+.transaction-table tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+.transaction-table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* ==========================================
+   4. 거래 타입 배지
+   ========================================== */
+
+.transaction-type {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.transaction-type-in {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.transaction-type-out {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+/* ==========================================
+   5. 금액 표시
+   ========================================== */
+
+.transaction-amount {
+    font-weight: 600;
+    font-family: 'Courier New', monospace;
+}
+
+.transaction-amount-in {
+    color: #28a745;
+}
+
+.transaction-amount-out {
+    color: #dc3545;
+}
+
+/* ==========================================
+   6. 거래 상세 페이지
+   ========================================== */
+
+.transaction-detail-container {
+    max-width: 900px;
+    margin: 30px auto;
+}
+
+.transaction-detail-card {
+    background: white;
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.transaction-detail-header {
+    border-bottom: 2px solid #f1f1f1;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+}
+
+.transaction-detail-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #333;
+}
+
+.transaction-detail-table {
+    width: 100%;
+    margin-bottom: 30px;
+}
+
+.transaction-detail-table tr {
+    border-bottom: 1px solid #f1f1f1;
+}
+
+.transaction-detail-table th {
+    width: 30%;
+    padding: 15px 10px;
+    text-align: left;
+    font-weight: 600;
+    color: #495057;
+}
+
+.transaction-detail-table td {
+    padding: 15px 10px;
+    color: #333;
+}
+
+/* ==========================================
+   7. 영수증 섹션
+   ========================================== */
+
+.receipt-section {
+    margin-top: 30px;
+    padding-top: 30px;
+    border-top: 2px solid #f1f1f1;
+}
+
+.receipt-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.receipt-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 15px;
+}
+
+.receipt-empty {
+    text-align: center;
+    padding: 40px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    color: #6c757d;
+}
+
+.receipt-upload-btn {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: 500;
+}
+
+.receipt-upload-btn:hover {
+    background-color: #0056b3;
+}
+
+/* ==========================================
+   8. 거래 폼 (생성/수정)
+   ========================================== */
+
+.transaction-form-container {
+    max-width: 700px;
+    margin: 30px auto;
+}
+
+.transaction-form-card {
+    background: white;
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.transaction-form-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 30px;
+    color: #333;
+}
+
+/* ==========================================
+   9. 영수증 업로드 폼
+   ========================================== */
+
+.attachment-upload-container {
+    max-width: 600px;
+    margin: 30px auto;
+}
+
+.attachment-upload-card {
+    background: white;
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.file-input-wrapper {
+    position: relative;
+    margin: 20px 0;
+}
+
+.file-input {
+    width: 100%;
+    padding: 40px 20px;
+    border: 2px dashed #ced4da;
+    border-radius: 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.file-input:hover {
+    border-color: #007bff;
+    background-color: #f8f9fa;
+}
+
+.file-input-text {
+    color: #6c757d;
+}
+
+/* ==========================================
+   10. 빈 상태
+   ========================================== */
+
+.transaction-empty {
+    text-align: center;
+    padding: 60px 20px;
+    background: white;
+    border-radius: 10px;
+}
+
+.transaction-empty-icon {
+    font-size: 4rem;
+    color: #dee2e6;
+    margin-bottom: 20px;
+}
+
+.transaction-empty-title {
+    font-size: 1.5rem;
+    color: #6c757d;
+    margin-bottom: 10px;
+}
+
+.transaction-empty-text {
+    color: #adb5bd;
+    margin-bottom: 20px;
+}
+
+/* ==========================================
+   11. 반응형 디자인
+   ========================================== */
+
+@media (max-width: 768px) {
+    .transaction-filter-form {
+        grid-template-columns: 1fr;
+    }
+    
+    .transaction-table {
+        font-size: 12px;
+    }
+    
+    .transaction-table th,
+    .transaction-table td {
+        padding: 10px 5px;
+    }
+}
+
+@media (max-width: 576px) {
+    .transaction-list-header {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    /* 테이블을 카드 형태로 변경 */
+    .transaction-table thead {
+        display: none;
+    }
+    
+    .transaction-table tbody tr {
+        display: block;
+        margin-bottom: 15px;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 15px;
+    }
+    
+    .transaction-table td {
+        display: block;
+        text-align: right;
+        border: none;
+        padding: 8px 0;
+    }
+    
+    .transaction-table td::before {
+        content: attr(data-label);
+        float: left;
+        font-weight: 600;
+        color: #495057;
+    }
+}

@@ -1,1 +1,218 @@
 <!-- 계좌 상세 + 거래 내역 -->
+<!-- accounts/templates/accounts/account_detail.html -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ account.name }} - AccountBook{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/account.css' %}">
+<link rel="stylesheet" href="{% static 'css/transactions.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="account-detail-container">
+    <!-- 상단 헤더 -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>{{ account.name }}</h2>
+        <div class="d-flex gap-2">
+            <a href="{% url 'accounts:account_update' account.pk %}" class="btn btn-primary">수정</a>
+            <a href="{% url 'accounts:account_list' %}" class="btn btn-secondary">목록</a>
+        </div>
+    </div>
+    
+    <!-- 계좌 정보 카드 -->
+    <div class="account-detail-card mb-4">
+        <div class="account-detail-header">
+            <h5 class="card-title">계좌 정보</h5>
+        </div>
+        
+        <table class="account-detail-table">
+            <tr>
+                <th>계좌명</th>
+                <td>{{ account.name }}</td>
+            </tr>
+            <tr>
+                <th>은행</th>
+                <td>{{ account.bank_name }}</td>
+            </tr>
+            <tr>
+                <th>계좌번호</th>
+                <td class="account-number">{{ account.masked_account_number }}</td>
+            </tr>
+            <tr>
+                <th>현재 잔액</th>
+                <td>
+                    <strong class="text-primary" style="font-size: 1.3rem;">
+                        {{ account.balance|floatformat:0 }}원
+                    </strong>
+                </td>
+            </tr>
+            <tr>
+                <th>상태</th>
+                <td>
+                    {% if account.is_active %}
+                        <span class="account-status account-status-active">활성</span>
+                    {% else %}
+                        <span class="account-status account-status-inactive">비활성</span>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <th>생성일</th>
+                <td>{{ account.created_at|date:"Y년 m월 d일 H:i" }}</td>
+            </tr>
+            <tr>
+                <th>최종 수정일</th>
+                <td>{{ account.updated_at|date:"Y년 m월 d일 H:i" }}</td>
+            </tr>
+        </table>
+        
+        <!-- 삭제 버튼 -->
+        <div class="mt-4">
+            <form method="post" action="{% url 'accounts:account_delete' account.pk %}" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger" onclick="return confirm('정말 이 계좌를 비활성화하시겠습니까?\n연결된 거래 내역은 유지됩니다.')">
+                    계좌 비활성화
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- 거래 내역 섹션 -->
+    <div class="card">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="card-title mb-0">이 계좌의 거래 내역</h5>
+                <a href="{% url 'transactions:transaction_create' %}?account={{ account.pk }}" class="btn btn-primary btn-sm">
+                    + 거래 추가
+                </a>
+            </div>
+            
+            <!-- 거래 내역 테이블 -->
+            {% if transactions %}
+                <div class="table-responsive">
+                    <table class="transaction-table">
+                        <thead>
+                            <tr>
+                                <th>날짜</th>
+                                <th>타입</th>
+                                <th>카테고리</th>
+                                <th>금액</th>
+                                <th>가맹점</th>
+                                <th>메모</th>
+                                <th>작업</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for transaction in transactions %}
+                            <tr>
+                                <td data-label="날짜">
+                                    {{ transaction.occurred_at|date:"Y-m-d" }}
+                                </td>
+                                <td data-label="타입">
+                                    {% if transaction.tx_type == 'IN' %}
+                                        <span class="transaction-type transaction-type-in">입금</span>
+                                    {% else %}
+                                        <span class="transaction-type transaction-type-out">출금</span>
+                                    {% endif %}
+                                </td>
+                                <td data-label="카테고리">
+                                    {{ transaction.category.name|default:"-" }}
+                                </td>
+                                <td data-label="금액">
+                                    <span class="transaction-amount {% if transaction.tx_type == 'IN' %}transaction-amount-in{% else %}transaction-amount-out{% endif %}">
+                                        {{ transaction.amount|floatformat:0 }}원
+                                    </span>
+                                </td>
+                                <td data-label="가맹점">
+                                    {{ transaction.merchant|default:"-"|truncatechars:20 }}
+                                </td>
+                                <td data-label="메모">
+                                    {{ transaction.memo|default:"-"|truncatechars:30 }}
+                                </td>
+                                <td data-label="작업">
+                                    <a href="{% url 'transactions:transaction_detail' transaction.pk %}" class="btn btn-sm btn-outline-primary">
+                                        상세
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- 거래 요약 -->
+                <div class="mt-4">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="stat-info-card">
+                                <div class="stat-info-title">총 거래 건수</div>
+                                <div class="stat-info-value">{{ transactions|length }}건</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="stat-info-card" style="border-left-color: #28a745;">
+                                <div class="stat-info-title">총 입금</div>
+                                <div class="stat-info-value text-success">
+                                    {% widthratio total_income 1 1 %}원
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="stat-info-card" style="border-left-color: #dc3545;">
+                                <div class="stat-info-title">총 출금</div>
+                                <div class="stat-info-value text-danger">
+                                    {% widthratio total_expense 1 1 %}원
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 페이지네이션 (선택사항) -->
+                {% if is_paginated %}
+                <nav aria-label="Page navigation" class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        {% if page_obj.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page=1">처음</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">이전</a>
+                            </li>
+                        {% endif %}
+                        
+                        <li class="page-item active">
+                            <span class="page-link">
+                                {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+                            </span>
+                        </li>
+                        
+                        {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.next_page_number }}">다음</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">마지막</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+                
+            {% else %}
+                <!-- 거래 내역 없음 -->
+                <div class="transaction-empty">
+                    <div class="transaction-empty-icon">📝</div>
+                    <h5 class="transaction-empty-title">거래 내역이 없습니다</h5>
+                    <p class="transaction-empty-text">이 계좌의 첫 거래를 추가해보세요!</p>
+                    <a href="{% url 'transactions:transaction_create' %}?account={{ account.pk }}" class="btn btn-primary">
+                        + 첫 거래 추가하기
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
