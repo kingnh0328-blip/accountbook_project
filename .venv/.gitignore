@@ -1,0 +1,26 @@
+# 1. 가상환경 (절대 올리면 안 된다냐!)
+.venv/
+venv/
+env/
+.env
+
+# 2. 환경변수 및 비밀 정보 (준호가 강조한 보안!)
+.env
+.env.local
+
+# 3. 파이썬 컴파일/캐시 파일
+__pycache__/
+*.py[cod]
+*$py.class
+
+# 4. 장고 미디어/정적 파일
+media/               # 사용자가 올린 영수증 사진은 깃에 안 올린다냐!
+static/              # 배포용으로 수집된 정적파일도 제외하라냐.
+
+# 5. OS 및 에디터 설정
+.DS_Store            # 맥(Mac) 쓰는 조원 있으면 꼭 넣어라냐!
+.vscode/             # VS Code 설정
+.idea/               # PyCharm 설정
+
+# 6. DB 관련 (로직용 SQLite를 쓴다면 제외)
+*.sqlite3

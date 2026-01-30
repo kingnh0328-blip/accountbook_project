@@ -174,7 +174,7 @@ class AttachmentUploadView(LoginRequiredMixin, CreateView):
     """
     model = Attachment
     form_class = AttachmentForm
-    template_name = 'transactions/attachment_upload.html'
+    template_name = 'transactions/transaction_upload.html'
     
     def dispatch(self, request, *args, **kwargs):
         """
@@ -186,7 +186,12 @@ class AttachmentUploadView(LoginRequiredMixin, CreateView):
             user=request.user  # 본인 거래만
         )
         return super().dispatch(request, *args, **kwargs)
-    
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['transaction'] = self.transaction
+        return context
+
     def form_valid(self, form):
         """
         파일 메타데이터 자동 설정
@@ -201,6 +206,8 @@ class AttachmentUploadView(LoginRequiredMixin, CreateView):
         form.instance.content_type = uploaded_file.content_type
         
         return super().form_valid(form)
+    
+
     
     def get_success_url(self):
         """업로드 후 해당 거래 상세 페이지로"""

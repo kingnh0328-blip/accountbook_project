@@ -1,0 +1,98 @@
+[
+  {
+    "model": "transactions.category",
+    "pk": 1,
+    "fields": {
+      "name": "식비",
+      "type": "OUT"
+    }
+  },
+  {
+    "model": "transactions.category",
+    "pk": 2,
+    "fields": {
+      "name": "교통비",
+      "type": "OUT"
+    }
+  },
+  {
+    "model": "transactions.category",
+    "pk": 3,
+    "fields": {
+      "name": "쇼핑",
+      "type": "OUT"
+    }
+  },
+  {
+    "model": "transactions.category",
+    "pk": 4,
+    "fields": {
+      "name": "문화생활",
+      "type": "OUT"
+    }
+  },
+  {
+    "model": "transactions.category",
+    "pk": 5,
+    "fields": {
+      "name": "의료/건강",
+      "type": "OUT"
+    }
+  },
+  {
+    "model": "transactions.category",
+    "pk": 6,
+    "fields": {
+      "name": "통신비",
+      "type": "OUT"
+    }
+  },
+  {
+    "model": "transactions.category",
+    "pk": 7,
+    "fields": {
+      "name": "생활비",
+      "type": "OUT"
+    }
+  },
+  {
+    "model": "transactions.category",
+    "pk": 8,
+    "fields": {
+      "name": "기타 지출",
+      "type": "OUT"
+    }
+  },
+  {
+    "model": "transactions.category",
+    "pk": 9,
+    "fields": {
+      "name": "월급",
+      "type": "IN"
+    }
+  },
+  {
+    "model": "transactions.category",
+    "pk": 10,
+    "fields": {
+      "name": "용돈",
+      "type": "IN"
+    }
+  },
+  {
+    "model": "transactions.category",
+    "pk": 11,
+    "fields": {
+      "name": "상여금",
+      "type": "IN"
+    }
+  },
+  {
+    "model": "transactions.category",
+    "pk": 12,
+    "fields": {
+      "name": "기타 수입",
+      "type": "IN"
+    }
+  }
+]
