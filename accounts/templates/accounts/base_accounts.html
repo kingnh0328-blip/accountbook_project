@@ -1,7 +1,13 @@
 <!-- 인증 페이지 공통 레이아웃 -->
 <!-- accounts/templates/accounts/base_account.html -->
 <!-- 인증 페이지(로그인, 회원가입) 전용 베이스 템플릿 -->
+{% extends 'base.html' %}
 {% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/account.css' %}">
+{% endblock %}
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>

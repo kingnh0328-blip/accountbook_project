@@ -1,6 +1,11 @@
 <!-- transactions/templates/transactions/transaction_detail.html -->
 <!-- 거래 상세 -->
 {% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/transaction.css' %}">
+{% endblock %}
 
 {% block title %}거래 상세 - AccountBook{% endblock %}
 

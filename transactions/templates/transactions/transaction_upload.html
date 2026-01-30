@@ -1,6 +1,11 @@
 <!-- transactions/templates/transactions/attachment_upload.html -->
 <!-- 영수증 업로드 -->
 {% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/transaction.css' %}">
+{% endblock %}
 
 {% block title %}영수증 업로드 - AccountBook{% endblock %}
 

@@ -1,6 +1,11 @@
 <!-- accounts/templates/accounts/account_form.html -->
  <!-- 계좌 생성/수정 폼 -->
 {% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/account.css' %}">
+{% endblock %}
 
 {% block title %}계좌 {% if object %}수정{% else %}생성{% endif %} - AccountBook{% endblock %}
 

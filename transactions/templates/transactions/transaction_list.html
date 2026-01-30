@@ -1,6 +1,11 @@
 <!-- transactions/templates/transactions/transaction_list.html -->
 <!-- 거래 목록 (테이블/필터) -->
 {% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/transaction.css' %}">
+{% endblock %}
 
 {% block title %}거래 내역 - AccountBook{% endblock %}
 
