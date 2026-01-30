@@ -1,0 +1,21 @@
+/* 공통 스타일 */
+/* 모바일 우선 접근 */
+.container {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* 태블릿 */
+@media (min-width: 768px) {
+    .container {
+        padding: 40px;
+    }
+}
+
+/* 데스크톱 */
+@media (min-width: 1024px) {
+    .container {
+        padding: 60px;
+    }
+}
