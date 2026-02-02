@@ -1,5 +1,6 @@
 <!-- transactions/templates/transactions/transaction_list.html -->
 {% extends 'base.html' %}
+{% load humanize %}
 
 {% block title %}거래 내역 - AccountBook{% endblock %}
 
@@ -73,7 +74,7 @@
                     </td>
                     <td>{{ transaction.account.name }}</td>
                     <td>{{ transaction.category.name|default:"-" }}</td>
-                    <td>{{ transaction.amount|floatformat:0 }}원</td>
+                    <td>{{ transaction.amount|floatformat:0|intcomma }}원</td>
                     <td>{{ transaction.merchant|default:"-" }}</td>
                     <td>{{ transaction.memo|truncatewords:5 }}</td>
                     <td>

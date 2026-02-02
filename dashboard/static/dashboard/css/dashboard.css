@@ -1,0 +1,47 @@
+/* 달력 스타일 */
+.calendar-table {
+    font-size: 0.85rem;
+}
+
+.calendar-day {
+    height: 80px;
+    vertical-align: top;
+    padding: 5px;
+    position: relative;
+}
+
+.calendar-day.empty {
+    background-color: #f8f9fa;
+}
+
+.day-number {
+    font-weight: bold;
+    font-size: 0.9rem;
+    margin-bottom: 3px;
+}
+
+.day-income {
+    color: #28a745;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.day-expense {
+    color: #dc3545;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.calendar-table thead th {
+    background-color: #e9ecef;
+    font-weight: 600;
+    padding: 8px 4px;
+}
+
+.calendar-table thead th:first-child {
+    color: #dc3545;
+}
+
+.calendar-table thead th:last-child {
+    color: #007bff;
+}

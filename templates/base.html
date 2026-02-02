@@ -6,21 +6,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}AccountBook{% endblock %}</title>
-    
+
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    <style>
-        body {
-            padding-top: 60px;
-        }
-        .navbar-brand {
-            font-weight: bold;
-        }
-    </style>
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+
+    <!-- Base CSS -->
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+
+    <!-- Page specific CSS -->
+    {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <!-- 네비게이션 바 -->
+    <!-- ========================================
+         네비게이션 바
+         - 상단 고정 메뉴
+         - 로그인 상태에 따라 다른 메뉴 표시
+    ========================================= -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
         <div class="container">
             <a class="navbar-brand" href="{% url 'dashboard:dashboard' %}">💰 AccountBook</a>
@@ -30,7 +35,7 @@
             </button>
             
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
+                <ul class="navbar-nav mx-auto">
                     {% if user.is_authenticated %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'dashboard:dashboard' %}">대시보드</a>
@@ -41,7 +46,9 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'transactions:transaction_list' %}">거래 내역</a>
                     </li>
-                    
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'report:customer_service' %}">고객센터</a>
+                    </li>
                     {% endif %}
                 </ul>
                 
@@ -74,8 +81,21 @@
         {% block content %}
         {% endblock %}
     </div>
-    
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p class="text-center text-muted mb-0">ⓒ 2026 일석삼조 All rights reserved</p>
+        </div>
+    </footer>
+
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+    {% block extra_js %}
+    {% endblock %}
 </body>
 </html>

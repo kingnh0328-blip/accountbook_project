@@ -6,7 +6,36 @@
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2>내 계좌 목록</h2>
-    <a href="{% url 'accounts:account_create' %}" class="btn btn-primary">+ 계좌 추가</a>
+    <div class="d-flex gap-3 align-items-center">
+        <!-- 총 순자산 박스 -->
+        <div class="border rounded px-3 py-2">
+            <small class="text-muted d-block">총 순자산</small>
+            <strong style="color: {% if net_assets >= 0 %}#28a745{% else %}#dc3545{% endif %}; font-size: 1.1rem;">
+                {{ net_assets|floatformat:0|intcomma }}원
+            </strong>
+        </div>
+        <a href="{% url 'accounts:account_create' %}" class="btn btn-primary">+ 계좌 추가</a>
+    </div>
+</div>
+
+<!-- 계좌별 총 수입, 지출 요약 -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <h5 class="card-title">총 수입</h5>
+                <h3>{{ total_income|floatformat:0|intcomma }}원</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card text-white bg-danger">
+            <div class="card-body">
+                <h5 class="card-title">총 지출</h5>
+                <h3>{{ total_expense|floatformat:0|intcomma }}원</h3>
+            </div>
+        </div>
+    </div>
 </div>
 
 {% if accounts %}
