@@ -7,16 +7,10 @@ load_dotenv()
 
 
 SECRET_KEY = os.getenv('SECRET_KEY')
-
-DEBUG = os.getenv('DEBUG', 'False') == 'True'
-
 ALLOWED_HOSTS = []
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = []
 
 
 INSTALLED_APPS = [
@@ -76,6 +70,7 @@ DATABASES = {
 "PORT": os.getenv("DB_PORT"),
     }
 }
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {
