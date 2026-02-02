@@ -17,7 +17,17 @@ class Category(models.Model):
     - 거래를 분류하기 위한 기준 (식비, 교통, 월세, 급여 등)
     - 관리자가 미리 만들어두거나 초기 데이터로 제공
     """
-    
+    user = models.ForeignKey(
+        User, 
+        on_delete=models.CASCADE, 
+        related_name='categories', 
+        null=True, 
+        blank=True,
+        verbose_name='생성자'
+    )
+
+
+
     TYPE_CHOICES = [
         ('IN', '수입'),      # 입금 전용
         ('OUT', '지출'),     # 출금 전용

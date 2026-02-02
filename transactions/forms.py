@@ -15,7 +15,32 @@ class TransactionForm(forms.ModelForm):
     """
     거래 생성/수정 폼
     """
-    
+    def __init__(self, *args, **kwargs):
+        # 1. 뷰에서 던져준 'user'와 'tx_type' 선물을 쏙 빼낸다냐! 😼
+        # pop을 안 하면 super().__init__이 "난 이거 몰라!" 하고 화낸다냐.
+        user = kwargs.pop('user', None)
+        tx_type = kwargs.pop('tx_type', None)
+        
+        super().__init__(*args, **kwargs) # 이제 'user'가 빠진 깨끗한 주머니를 전달한다냐!
+
+        if user:
+            # 2. 내 계좌만 선택할 수 있게 필터링!
+            self.fields['account'].queryset = Account.objects.filter(user=user, is_active=True)
+            
+            # 3. 아까 준호가 원했던 '백엔드 카테고리 필터링' 로직 등장! 🐾
+            from django.db.models import Q
+            category_qs = Category.objects.filter(Q(user=user) | Q(user__isnull=True))
+            
+            if tx_type == 'IN':
+                self.fields['category'].queryset = category_qs.filter(Q(type='IN') | Q(type='BOTH'))
+                self.initial['tx_type'] = 'IN' # 수입으로 자동 선택!
+            elif tx_type == 'OUT':
+                self.fields['category'].queryset = category_qs.filter(Q(type='OUT') | Q(type='BOTH'))
+                self.initial['tx_type'] = 'OUT' # 지출로 자동 선택!
+            else:
+                self.fields['category'].queryset = category_qs
+
+
     class Meta:
         model = Transaction
         fields = ['account', 'category', 'tx_type', 'amount', 
@@ -77,6 +102,26 @@ class TransactionForm(forms.ModelForm):
             raise ValidationError('금액이 너무 큽니다. 확인해주세요.')
         
         return amount
+        def __init__(self, *args, **kwargs):
+            user = kwargs.pop('user', None)
+            tx_type_from_view = kwargs.pop('tx_type', None) 
+            super().__init__(*args, **kwargs)
+        
+        if user:
+            # 1. 일단 내 카테고리 + 공통 카테고리를 다 가져온다냐.
+            queryset = Category.objects.filter(Q(user=user) | Q(user__isnull=True))
+            
+            # 2. 💡 준호가 원하던 바로 그 'if'문 등장!
+            if tx_type_from_view == 'IN':
+                # 수입 버튼 누르고 왔으면 수입용/공통만 보여주기
+                queryset = queryset.filter(Q(type='IN') | Q(type='BOTH'))
+                self.initial['tx_type'] = 'IN' # 거래 타입도 '수입'으로 자동 세팅!
+            elif tx_type_from_view == 'OUT':
+                # 지출 버튼 누르고 왔으면 지출용/공통만 보여주기
+                queryset = queryset.filter(Q(type='OUT') | Q(type='BOTH'))
+                self.initial['tx_type'] = 'OUT' # 거래 타입도 '지출'로 자동 세팅!
+            
+            self.fields['category'].queryset = queryset.order_by('name')
 
 
 class TransactionFilterForm(forms.Form):
@@ -217,6 +262,17 @@ class AttachmentForm(forms.ModelForm):
                 raise ValidationError('유효하지 않은 이미지 파일입니다.')
         
         return file
+
+
+class CategoryForm(forms.ModelForm):
+    class Meta:
+        model = Category
+        fields = ['name', 'type']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '예: 취미생활'}),
+            'type': forms.Select(attrs={'class': 'form-control'}),
+        }
+
 
 
 # ========================================
