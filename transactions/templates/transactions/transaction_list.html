@@ -7,7 +7,7 @@
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2>거래 내역</h2>
-   <li class="nav-item d-flex align-items-center gap-2" style="list-style: none;">
+   <li class="nav-item d-flex align-items-center gap-2 no-list-style">
     <a href="{% url 'transactions:transaction_create' %}?type=IN" class="btn btn-sm btn-success">
         + 수입
     </a>

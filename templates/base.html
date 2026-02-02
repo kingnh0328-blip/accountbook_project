@@ -58,7 +58,7 @@
                         <span class="nav-link">{{ user.username }}님</span>
                     </li>
                     <li class="nav-item">
-                        <form method="post" action="{% url 'accounts:logout' %}" style="display: inline;">
+                        <form method="post" action="{% url 'accounts:logout' %}" class="inline-form">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-outline-light btn-sm">로그아웃</button>
                         </form>
