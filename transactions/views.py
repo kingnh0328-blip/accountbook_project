@@ -86,14 +86,11 @@ class TransactionListView(LoginRequiredMixin, ListView):
         
         return queryset
     
-<<<<<<< HEAD
-=======
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['accounts'] = Account.objects.filter(user=self.request.user, is_active=True)
         return context
     
->>>>>>> 08392c1 (test 완료)
     # 예: GET /transactions/ → 전체 거래 목록
     #     GET /transactions/?account=1 → 1번 계좌 거래만
     #     GET /transactions/?q=카페 → "카페"가 포함된 거래 검색
