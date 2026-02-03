@@ -2,6 +2,7 @@
 거래(Transaction) 및 첨부파일(Attachment) 모델 정의
 - 역할: 입출금 거래 내역 및 영수증 관리
 - 담당: 팀원 B
+- 수정: 팀원 C (Attachment에 is_image, is_pdf 메서드 추가)
 """
 
 from django.db import models
@@ -35,6 +36,7 @@ class Category(models.Model):
         default='BOTH',
         verbose_name='타입'
     )
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
     
     class Meta:
         verbose_name = '카테고리'
@@ -50,6 +52,13 @@ class Transaction(models.Model):
     - 계좌에서 발생한 입금/출금 기록
     - 프로젝트의 핵심 비즈니스 데이터
     """
+    def income(self):
+        """수입(입금) 거래만 필터링"""
+        return self.filter(tx_type='IN')
+    
+    def expense(self):
+        """지출(출금) 거래만 필터링"""
+        return self.filter(tx_type='OUT')
     
     # 거래 타입 선택지
     TX_TYPE_CHOICES = [
@@ -207,6 +216,23 @@ class Attachment(models.Model):
         if self.file:
             self.file.delete(save=False)
         super().delete(*args, **kwargs)
+    
+    
+    def is_image(self):
+        """
+        이미지 파일인지 확인
+        - content_type이 'image/'로 시작하면 이미지
+        - 예: image/jpeg, image/png, image/gif 등
+        """
+        return self.content_type.startswith('image/')
+    
+    
+    def is_pdf(self):
+        """
+        PDF 파일인지 확인
+        - content_type이 'application/pdf'면 PDF
+        """
+        return self.content_type == 'application/pdf'
 
 
 # 사용 예시:
@@ -236,3 +262,9 @@ class Attachment(models.Model):
 # # 거래의 영수증 조회
 # if hasattr(transaction, 'attachment'):
 #     print(transaction.attachment.file.url)
+#
+# # 파일 타입 확인
+# if attachment.is_image():
+#     print("이미지 파일입니다")
+# elif attachment.is_pdf():
+#     print("PDF 파일입니다")
