@@ -55,7 +55,7 @@
             <div class="mb-3">
                 <div class="d-flex justify-content-between align-items-center mb-1">
                     <label for="{{ form.category.id_for_label }}" class="form-label mb-0">카테고리</label>
-                    <a href="{% url 'transactions:category_create' %}" class="btn btn-sm btn-outline-success" target="_blank">+ 새 카테고리 만들기</a>
+                    <a href="{% url 'transactions:category_create' %}?from_type={{ request.GET.type }}" class="btn btn-sm btn-outline-success" >+ 새 카테고리 만들기</a>
                 </div>
                 {{ form.category }}
                 {% if form.category.errors %}

@@ -246,6 +246,11 @@ class CategoryCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.user = self.request.user # 현재 로그인한 유저로 자동 저장한다냐!
         return super().form_valid(form)
+    def get_success_url(self):
+        from_type = self.request.GET.get('from_type')
+        if from_type:
+            return reverse_lazy('transactions:transaction_create') + f'?type={from_type}'
+        return reverse_lazy('transactions:transaction_create')
 
 
 
