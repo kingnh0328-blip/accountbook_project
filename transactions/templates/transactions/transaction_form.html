@@ -84,3 +84,46 @@
     </div>
 </div>
 {% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const txTypeSelect = document.getElementById('{{ form.tx_type.id_for_label }}');
+    const categorySelect = document.getElementById('{{ form.category.id_for_label }}');
+
+    if (!txTypeSelect || !categorySelect) return;
+
+    // 현재 선택된 카테고리 ID 저장 (수정 시 기존 값 유지용)
+    const currentCategoryId = categorySelect.value;
+
+    txTypeSelect.addEventListener('change', function() {
+        const txType = this.value;
+        if (!txType) return;
+
+        fetch("{% url 'transactions:api_categories_by_type' %}?tx_type=" + txType)
+            .then(response => response.json())
+            .then(data => {
+                // 기존 옵션 제거
+                categorySelect.innerHTML = '<option value="">---------</option>';
+
+                // 새 옵션 추가
+                data.categories.forEach(function(cat) {
+                    const option = document.createElement('option');
+                    option.value = cat.id;
+                    option.textContent = cat.name;
+                    // 기존 선택값 복원
+                    if (String(cat.id) === String(currentCategoryId)) {
+                        option.selected = true;
+                    }
+                    categorySelect.appendChild(option);
+                });
+            });
+    });
+
+    // 페이지 로드 시 초기 필터링 실행
+    if (txTypeSelect.value) {
+        txTypeSelect.dispatchEvent(new Event('change'));
+    }
+});
+</script>
+{% endblock %}

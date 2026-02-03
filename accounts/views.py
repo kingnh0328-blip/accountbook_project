@@ -214,7 +214,7 @@ class AccountDeleteView(LoginRequiredMixin, DeleteView):
         """본인 계좌만 삭제 가능"""
         return Account.objects.filter(user=self.request.user)
     
-    def delete(self, request, *args, **kwargs):
+    def form_valid(self, form):
         """
         실제로는 삭제하지 않고 비활성화
         - 데이터 보존을 위해
