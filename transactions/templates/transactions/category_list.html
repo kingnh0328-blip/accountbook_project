@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>내 카테고리 관리 ⚙️</h2>
+        <a href="{% url 'transactions:category_create' %}" class="btn btn-primary">+ 새 카테고리</a>
+    </div>
+
+    <ul class="list-group">
+        {% for category in categories %}
+        <li class="list-group-id d-flex justify-content-between align-items-center">
+            <span>{{ category.name }}</span>
+            <a href="{% url 'transactions:category_delete' category.pk %}" class="btn btn-sm btn-outline-danger">
+                삭제 🗑️
+            </a>
+        </li>
+        {% empty %}
+        <li class="list-group-item text-muted">아직 만든 카테고리가 없다냐! 🐾</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

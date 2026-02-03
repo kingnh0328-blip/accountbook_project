@@ -54,14 +54,19 @@
             
             <div class="mb-3">
                 <div class="d-flex justify-content-between align-items-center mb-1">
-                    <label for="{{ form.category.id_for_label }}" class="form-label mb-0">카테고리</label>
-                    <a href="{% url 'transactions:category_create' %}?from_type={{ request.GET.type }}" class="btn btn-sm btn-outline-success" >+ 새 카테고리 만들기</a>
-                </div>
+    <label for="{{ form.category.id_for_label }}" class="form-label mb-0">카테고리</label>
+    
+    <div class="d-flex gap-1"> 
+        <a href="{% url 'transactions:category_create' %}?from_type={{ request.GET.type }}" class="btn btn-sm btn-outline-success">+ 새 카테고리</a>
+        <a href="{% url 'transactions:category_list' %}" class="btn btn-sm btn-outline-secondary">🗑️ 관리/삭제</a>
+    </div>
+</div>
                 {{ form.category }}
                 {% if form.category.errors %}
                 <div class="text-danger">{{ form.category.errors }}</div>
                 {% endif %}
                 <small class="text-muted">원하는 카테고리가 없으면 위 버튼을 눌러봐! 😼</small>
+                
             </div>
             
             <div class="d-flex gap-2">

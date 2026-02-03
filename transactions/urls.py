@@ -16,5 +16,7 @@ urlpatterns = [
     path('<int:pk>/upload/', views.AttachmentUploadView.as_view(), name='attachment_upload'),
     path('attachment/<int:pk>/delete/', views.AttachmentDeleteView.as_view(), name='attachment_delete'),
     path('category/create/', views.CategoryCreateView.as_view(), name='category_create'),
+    path('category/<int:pk>/delete/', views.CategoryDeleteView.as_view(), name='category_delete'),
+    path('categories/', views.CategoryListView.as_view(), name='category_list'),
 ]
 

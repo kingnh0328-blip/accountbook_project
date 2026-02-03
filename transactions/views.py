@@ -252,7 +252,23 @@ class CategoryCreateView(LoginRequiredMixin, CreateView):
             return reverse_lazy('transactions:transaction_create') + f'?type={from_type}'
         return reverse_lazy('transactions:transaction_create')
 
+class CategoryListView(LoginRequiredMixin, ListView):
+    model = Category
+    template_name = 'transactions/category_list.html'
+    context_object_name = 'categories'
 
+    def get_queryset(self):
+        # 💡 내가 만든 카테고리만 보여줘야 한다냐!
+        return Category.objects.filter(user=self.request.user)
+
+class CategoryDeleteView(LoginRequiredMixin, DeleteView):
+    model = Category
+    # 삭제가 끝나면 카테고리 관리 페이지나 거래 목록으로 돌려보낸다냐!
+    success_url = reverse_lazy('transactions:transaction_list') 
+    
+    # 💡 보안상 본인 카테고리만 삭제할 수 있게 쿼리셋을 제한하자냐!
+    def get_queryset(self):
+        return Category.objects.filter(user=self.request.user)
 
 # ============================================
 # URL 패턴과의 연결 예시
