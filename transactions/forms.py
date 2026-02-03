@@ -33,10 +33,12 @@ class TransactionForm(forms.ModelForm):
             
             if tx_type == 'IN':
                 self.fields['category'].queryset = category_qs.filter(Q(type='IN') | Q(type='BOTH'))
-                self.initial['tx_type'] = 'IN' # 수입으로 자동 선택!
+                self.fields['tx_type'].choices = [('IN', '입금')]
+                self.initial['tx_type'] = 'IN'
             elif tx_type == 'OUT':
                 self.fields['category'].queryset = category_qs.filter(Q(type='OUT') | Q(type='BOTH'))
-                self.initial['tx_type'] = 'OUT' # 지출로 자동 선택!
+                self.fields['tx_type'].choices = [('OUT', '출금')]
+                self.initial['tx_type'] = 'OUT'
             else:
                 self.fields['category'].queryset = category_qs
 
@@ -102,26 +104,6 @@ class TransactionForm(forms.ModelForm):
             raise ValidationError('금액이 너무 큽니다. 확인해주세요.')
         
         return amount
-        def __init__(self, *args, **kwargs):
-            user = kwargs.pop('user', None)
-            tx_type_from_view = kwargs.pop('tx_type', None) 
-            super().__init__(*args, **kwargs)
-        
-        if user:
-            # 1. 일단 내 카테고리 + 공통 카테고리를 다 가져온다냐.
-            queryset = Category.objects.filter(Q(user=user) | Q(user__isnull=True))
-            
-            # 2. 💡 준호가 원하던 바로 그 'if'문 등장!
-            if tx_type_from_view == 'IN':
-                # 수입 버튼 누르고 왔으면 수입용/공통만 보여주기
-                queryset = queryset.filter(Q(type='IN') | Q(type='BOTH'))
-                self.initial['tx_type'] = 'IN' # 거래 타입도 '수입'으로 자동 세팅!
-            elif tx_type_from_view == 'OUT':
-                # 지출 버튼 누르고 왔으면 지출용/공통만 보여주기
-                queryset = queryset.filter(Q(type='OUT') | Q(type='BOTH'))
-                self.initial['tx_type'] = 'OUT' # 거래 타입도 '지출'로 자동 세팅!
-            
-            self.fields['category'].queryset = queryset.order_by('name')
 
 
 class TransactionFilterForm(forms.Form):

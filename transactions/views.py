@@ -10,6 +10,7 @@ from django.urls import reverse_lazy
 from django.db.models import Q  # OR 조건 검색용
 from django.shortcuts import get_object_or_404, redirect
 from django.views import View
+from django.http import JsonResponse
 
 from .models import Transaction, Attachment, Category
 from accounts.models import Account
@@ -63,7 +64,15 @@ class TransactionListView(LoginRequiredMixin, ListView):
         
         end_date = self.request.GET.get('end_date')
         if end_date:
-            queryset = queryset.filter(occurred_at__lte=end_date)
+            from datetime import timedelta
+            from django.utils.dateparse import parse_date
+            from django.utils import timezone as tz
+            parsed = parse_date(end_date)
+            if parsed:
+                end_dt = tz.make_aware(
+                    tz.datetime(parsed.year, parsed.month, parsed.day)
+                ) + timedelta(days=1)
+                queryset = queryset.filter(occurred_at__lt=end_dt)
         
         # 5. 키워드 검색 (?q=카페)
         # 메모 또는 가맹점에서 검색
@@ -79,7 +88,7 @@ class TransactionListView(LoginRequiredMixin, ListView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['accounts'] = Account.objects.all()  # 모든 계좌 정보 추가
+        context['accounts'] = Account.objects.filter(user=self.request.user, is_active=True)
         return context
     
     # 예: GET /transactions/ → 전체 거래 목록
@@ -159,14 +168,20 @@ class TransactionUpdateView(LoginRequiredMixin, UpdateView):
     model = Transaction
     form_class = TransactionForm
     template_name = 'transactions/transaction_form.html'
-    
+
     def get_queryset(self):
         """본인 거래만 수정 가능"""
         return Transaction.objects.filter(user=self.request.user)
-    
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        kwargs['tx_type'] = self.object.tx_type
+        return kwargs
+
     def get_success_url(self):
         """수정 후 해당 거래 상세 페이지로"""
-        return reverse_lazy('transactions:transaction_detail', 
+        return reverse_lazy('transactions:transaction_detail',
                           kwargs={'pk': self.object.pk})
 
 
@@ -257,6 +272,30 @@ class AttachmentDeleteView(LoginRequiredMixin, View):
         return redirect('transactions:transaction_detail', pk=transaction_pk)
     
     # 예: POST /attachment/5/delete/ → 5번 영수증 삭제
+
+class CategoryByTypeView(LoginRequiredMixin, View):
+    """
+    카테고리 목록을 거래 타입별로 필터링하여 JSON으로 반환
+    - GET /transactions/api/categories/?tx_type=IN
+    - GET /transactions/api/categories/?tx_type=OUT
+    """
+    def get(self, request):
+        tx_type = request.GET.get('tx_type')
+        category_qs = Category.objects.filter(
+            Q(user=request.user) | Q(user__isnull=True)
+        )
+
+        if tx_type == 'IN':
+            category_qs = category_qs.filter(Q(type='IN') | Q(type='BOTH'))
+        elif tx_type == 'OUT':
+            category_qs = category_qs.filter(Q(type='OUT') | Q(type='BOTH'))
+
+        categories = [
+            {'id': c.id, 'name': str(c)}
+            for c in category_qs.order_by('name')
+        ]
+        return JsonResponse({'categories': categories})
+
 
 class CategoryCreateView(LoginRequiredMixin, CreateView):
     model = Category

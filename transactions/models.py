@@ -173,6 +173,8 @@ class Transaction(models.Model):
                 # 기존 지출을 취소 (잔액 증가)
                 old_transaction.account.balance += old_transaction.amount
             old_transaction.account.save()
+            # 메모리의 self.account와 DB를 동기화
+            self.account.refresh_from_db()
 
         # 거래 저장
         super().save(*args, **kwargs)
