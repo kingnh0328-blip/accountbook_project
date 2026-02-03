@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card border-danger">
+        <div class="card-header bg-danger text-white">
+            <h4>카테고리 삭제 확인 ⚠️</h4>
+        </div>
+        <div class="card-body text-center">
+            <p>"<strong>{{ object.name }}</strong>" 카테고리를 삭제하시겠습니까?</p>
+            <p class="text-muted small">이 카테고리를 사용하는 거래 내역에서 카테고리가 사라질 수 있어요! 🐾</p>
+            
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">네, 삭제할래요!</button>
+                <a href="{% url 'transactions:transaction_list' %}" class="btn btn-secondary">아뇨, 취소할게요!</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
