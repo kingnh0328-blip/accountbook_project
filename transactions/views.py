@@ -13,7 +13,7 @@ from django.views import View
 
 from .models import Transaction, Attachment, Category
 from accounts.models import Account
-from .forms import TransactionForm, AttachmentForm
+from .forms import TransactionForm, AttachmentForm, CategoryForm
 
 
 # ============================================
@@ -91,17 +91,17 @@ class TransactionCreateView(LoginRequiredMixin, CreateView):
     template_name = 'transactions/transaction_form.html'
     success_url = reverse_lazy('transactions:transaction_list')
     
-    def get_form(self, form_class=None):
-        """
-        폼에서 본인 계좌만 선택 가능하도록 설정
-        """
-        form = super().get_form(form_class)
-        # account 필드의 선택지를 본인 계좌로 제한
-        form.fields['account'].queryset = Account.objects.filter(
-            user=self.request.user,
-            is_active=True
-        )
-        return form
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+
+# 💡 URL에서 'type'이 뭔지 알아내서 폼에 전달한다냐! 😼
+
+# 예: /transactions/create/?type=IN
+
+        kwargs['tx_type'] = self.request.GET.get('type')
+
+        return kwargs
     
     def form_valid(self, form):
         """자동으로 현재 사용자 설정"""
@@ -174,7 +174,7 @@ class AttachmentUploadView(LoginRequiredMixin, CreateView):
     """
     model = Attachment
     form_class = AttachmentForm
-    template_name = 'transactions/attachment_upload.html'
+    template_name = 'transactions/transaction_upload.html'
     
     def dispatch(self, request, *args, **kwargs):
         """
@@ -186,7 +186,12 @@ class AttachmentUploadView(LoginRequiredMixin, CreateView):
             user=request.user  # 본인 거래만
         )
         return super().dispatch(request, *args, **kwargs)
-    
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['transaction'] = self.transaction
+        return context
+
     def form_valid(self, form):
         """
         파일 메타데이터 자동 설정
@@ -201,6 +206,8 @@ class AttachmentUploadView(LoginRequiredMixin, CreateView):
         form.instance.content_type = uploaded_file.content_type
         
         return super().form_valid(form)
+    
+
     
     def get_success_url(self):
         """업로드 후 해당 거래 상세 페이지로"""
@@ -230,6 +237,38 @@ class AttachmentDeleteView(LoginRequiredMixin, View):
     
     # 예: POST /attachment/5/delete/ → 5번 영수증 삭제
 
+class CategoryCreateView(LoginRequiredMixin, CreateView):
+    model = Category
+    form_class = CategoryForm
+    template_name = 'transactions/category_form.html'
+    success_url = reverse_lazy('transactions:transaction_create') # 생성 후 거래 입력창으로!
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user # 현재 로그인한 유저로 자동 저장한다냐!
+        return super().form_valid(form)
+    def get_success_url(self):
+        from_type = self.request.GET.get('from_type')
+        if from_type:
+            return reverse_lazy('transactions:transaction_create') + f'?type={from_type}'
+        return reverse_lazy('transactions:transaction_create')
+
+class CategoryListView(LoginRequiredMixin, ListView):
+    model = Category
+    template_name = 'transactions/category_list.html'
+    context_object_name = 'categories'
+
+    def get_queryset(self):
+        # 💡 내가 만든 카테고리만 보여줘야 한다냐!
+        return Category.objects.filter(user=self.request.user)
+
+class CategoryDeleteView(LoginRequiredMixin, DeleteView):
+    model = Category
+    # 삭제가 끝나면 카테고리 관리 페이지나 거래 목록으로 돌려보낸다냐!
+    success_url = reverse_lazy('transactions:transaction_list') 
+    
+    # 💡 보안상 본인 카테고리만 삭제할 수 있게 쿼리셋을 제한하자냐!
+    def get_queryset(self):
+        return Category.objects.filter(user=self.request.user)
 
 # ============================================
 # URL 패턴과의 연결 예시
