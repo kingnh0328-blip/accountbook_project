@@ -15,6 +15,7 @@ from django.db.models import Sum, Count, Q
 from datetime import datetime
 
 from transactions.models import Transaction, Category, Attachment  # ← 변경!
+from accounts.models import Account  # ← 추가!
 from .forms import AttachmentForm
 
 
@@ -58,7 +59,17 @@ class DashboardView(LoginRequiredMixin, TemplateView):
             total=Sum('amount')
         )['total'] or 0
         
-        balance = income - expense
+        # ===== 수정: 순합 계산 =====
+        # 모든 계좌의 초기 잔액 합계
+        account_balance = Account.objects.filter(
+            user=self.request.user
+        ).aggregate(
+            total=Sum('balance')
+        )['total'] or 0
+        
+        # 순합 = 계좌 초기잔액 + 수입 - 지출
+        balance = account_balance + income - expense
+        # ===========================
         
         # 카테고리별 통계 (지출만)
         category_stats = transactions.filter(
