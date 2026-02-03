@@ -6,7 +6,14 @@
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2>거래 내역</h2>
-    <a href="{% url 'transactions:transaction_create' %}" class="btn btn-primary">+ 거래 추가</a>
+   <li class="nav-item d-flex align-items-center gap-2" style="list-style: none;">
+    <a href="{% url 'transactions:transaction_create' %}?type=IN" class="btn btn-sm btn-success">
+        + 수입
+    </a>
+    <a href="{% url 'transactions:transaction_create' %}?type=OUT" class="btn btn-sm btn-danger">
+        + 지출
+    </a>
+</li>
 </div>
 
 <!-- 필터링 폼 -->

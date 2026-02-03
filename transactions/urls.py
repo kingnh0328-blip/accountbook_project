@@ -15,4 +15,6 @@ urlpatterns = [
     # 영수증 업로드/삭제 (팀원 C 지원)
     path('<int:pk>/upload/', views.AttachmentUploadView.as_view(), name='attachment_upload'),
     path('attachment/<int:pk>/delete/', views.AttachmentDeleteView.as_view(), name='attachment_delete'),
+    path('category/create/', views.CategoryCreateView.as_view(), name='category_create'),
 ]
+
