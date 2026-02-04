@@ -1,0 +1,85 @@
+/*
+ * Base Template Styles
+ * 프로젝트 전체에 적용되는 기본 스타일
+ */
+
+/* ==============================================
+   레이아웃
+   ============================================== */
+
+/* Body 레이아웃 설정 */
+body {
+    padding-top: 60px;        /* 상단 고정 네비게이션바를 위한 여백 */
+    padding-bottom: 60px;     /* 하단 footer를 위한 여백 */
+    min-height: 100vh;        /* 최소 높이를 뷰포트 전체로 설정 */
+    display: flex;            /* Flexbox 레이아웃 사용 */
+    flex-direction: column;   /* 세로 방향 배치 */
+}
+
+/* 네비게이션 바 스타일 */
+.navbar-brand {
+    font-weight: bold;        /* 로고 텍스트를 굵게 */
+}
+
+/* 메인 컨텐츠 영역 */
+.container.mt-4 {
+    flex: 1;                  /* 남은 공간을 모두 차지하여 footer를 하단에 고정 */
+}
+
+/* Footer 스타일 */
+footer {
+    background-color: #f8f9fa;  /* 연한 회색 배경 */
+    border-top: 1px solid #dee2e6;  /* 상단 경계선 */
+    padding: 20px 0;           /* 상하 여백 */
+    margin-top: 40px;          /* 상단 마진 */
+}
+
+/* ==============================================
+   공통 유틸리티 클래스
+   ============================================== */
+
+/* 인라인 폼 (삭제 버튼 등) */
+.inline-form {
+    display: inline;
+}
+
+/* 리스트 스타일 제거 */
+.no-list-style {
+    list-style: none;
+}
+
+/* ==============================================
+   금액 색상 클래스
+   ============================================== */
+
+/* 수입 (초록색) */
+.text-income {
+    color: #28a745;
+}
+
+/* 지출 (빨간색) */
+.text-expense {
+    color: #dc3545;
+}
+
+/* 금액 표시 (큰 텍스트) */
+.amount-large {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+/* 순자산 금액 표시 */
+.net-assets-amount {
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+/* ==============================================
+   빈 상태 아이콘
+   ============================================== */
+
+/* 빈 상태 아이콘 (회색, 큰 사이즈) */
+.icon-empty {
+    font-size: 3rem;
+    color: #ccc;
+}

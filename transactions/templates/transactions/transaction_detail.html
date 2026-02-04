@@ -1,6 +1,12 @@
 {% extends 'base.html' %}
+{% load humanize %}
+{% load static %}
 
 {% block title %}거래 상세 - AccountBook{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'transactions/css/transaction_detail.css' %}">
+{% endblock %}
 
 {% block content %}
 <div class="container mt-4">
@@ -10,15 +16,19 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h4 class="mb-0">거래 상세</h4>
                     <div>
-                        <a href="{% url 'transactions:transaction_update' transaction.pk %}" 
+                        <a href="{% url 'transactions:transaction_update' transaction.pk %}"
                            class="btn btn-sm btn-warning">
                             <i class="bi bi-pencil"></i> 수정
                         </a>
-                        <a href="{% url 'transactions:transaction_delete' transaction.pk %}" 
-                           class="btn btn-sm btn-danger"
-                           onclick="return confirm('정말 삭제하시겠습니까?')">
-                            <i class="bi bi-trash"></i> 삭제
-                        </a>
+                        <form method="post"
+                              action="{% url 'transactions:transaction_delete' transaction.pk %}"
+                              class="inline-form"
+                              onsubmit="return confirm('정말 삭제하시겠습니까?')">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-danger">
+                                <i class="bi bi-trash"></i> 삭제
+                            </button>
+                        </form>
                     </div>
                 </div>
                 
@@ -27,7 +37,7 @@
                     <table class="table">
                         <tbody>
                             <tr>
-                                <th style="width: 30%;">거래일시</th>
+                                <th class="table-label">거래일시</th>
                                 <td>{{ transaction.occurred_at|date:"Y-m-d H:i" }}</td>
                             </tr>
                             <tr>
@@ -45,9 +55,9 @@
                             <tr>
                                 <th>금액</th>
                                 <td>
-                                    <strong style="color: {% if transaction.tx_type == 'IN' %}#28a745{% else %}#dc3545{% endif %}; font-size: 1.2em;">
+                                    <strong class="amount-large {% if transaction.tx_type == 'IN' %}text-income{% else %}text-expense{% endif %}">
                                         {% if transaction.tx_type == 'IN' %}+{% else %}-{% endif %}
-                                        {{ transaction.amount|floatformat:0 }}원
+                                        {{ transaction.amount|floatformat:0|intcomma }}원
                                     </strong>
                                 </td>
                             </tr>
@@ -112,10 +122,9 @@
                         <!-- 이미지 미리보기 -->
                         {% if transaction.attachment.content_type|slice:":5" == "image" %}
                             <div class="mb-3">
-                                <img src="{{ transaction.attachment.file.url }}" 
-                                     class="img-fluid rounded border" 
+                                <img src="{{ transaction.attachment.file.url }}"
+                                     class="img-fluid rounded border receipt-preview"
                                      alt="영수증"
-                                     style="cursor: pointer;"
                                      onclick="window.open('{{ transaction.attachment.file.url }}', '_blank')">
                                 <small class="text-muted d-block mt-2">
                                     클릭하면 크게 볼 수 있습니다
@@ -148,7 +157,7 @@
                     {% else %}
                         <!-- 영수증이 없는 경우 -->
                         <div class="text-center py-4">
-                            <i class="bi bi-receipt" style="font-size: 3rem; color: #ccc;"></i>
+                            <i class="bi bi-receipt icon-empty"></i>
                             <p class="text-muted mt-2">업로드된 영수증이 없습니다</p>
                             <a href="{% url 'transactions:attachment_upload' transaction.pk %}" 
                                class="btn btn-primary">
@@ -162,16 +171,4 @@
     </div>
 </div>
 
-<!-- 이미지 확대 모달 (선택사항) -->
-<style>
-.card-header {
-    background-color: #f8f9fa;
-    border-bottom: 2px solid #dee2e6;
-}
-
-img.img-fluid:hover {
-    opacity: 0.8;
-    transition: opacity 0.3s;
-}
-</style>
 {% endblock %}

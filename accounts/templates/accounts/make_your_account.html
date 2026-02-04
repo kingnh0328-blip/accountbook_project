@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}계좌 등록 필요 - AccountBook{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow-lg">
+            <div class="card-body text-center p-5">
+                <!-- 아이콘 -->
+                <div class="mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" fill="currentColor" class="bi bi-wallet2 text-primary" viewBox="0 0 16 16">
+                        <path d="M12.136.326A1.5 1.5 0 0 1 14 1.78V3h.5A1.5 1.5 0 0 1 16 4.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 13.5v-9a1.5 1.5 0 0 1 1.432-1.499L12.136.326zM5.562 3H13V1.78a.5.5 0 0 0-.621-.484L5.562 3zM1.5 4a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5h-13z"/>
+                    </svg>
+                </div>
+
+                <!-- 제목 -->
+                <h2 class="mb-3">계좌를 먼저 등록해주세요</h2>
+
+                <!-- 설명 -->
+                <p class="text-muted mb-4">
+                    서비스 이용을 위해, 첫번째 자산계좌를 입력해주세요.<br>
+                    계좌를 등록하면, 수입과 지출을 확인할 수 있습니다.
+                </p>
+
+                <!-- 계좌 생성 버튼 -->
+                <a href="{% url 'accounts:account_create' %}" class="btn btn-primary btn-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-plus-circle me-2" viewBox="0 0 16 16">
+                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                    </svg>
+                    계좌 생성
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

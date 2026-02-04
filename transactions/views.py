@@ -104,9 +104,25 @@ class TransactionCreateView(LoginRequiredMixin, CreateView):
         return kwargs
     
     def form_valid(self, form):
-        """자동으로 현재 사용자 설정"""
+        """자동으로 현재 사용자 설정 및 영수증 업로드 처리"""
         form.instance.user = self.request.user
-        return super().form_valid(form)
+        response = super().form_valid(form)
+
+        # 영수증 파일이 업로드된 경우 처리
+        receipt_file = self.request.FILES.get('receipt_file')
+        if receipt_file:
+            # Attachment 객체 생성
+            attachment = Attachment(
+                user=self.request.user,
+                transaction=self.object,
+                file=receipt_file,
+                original_name=receipt_file.name,
+                size=receipt_file.size,
+                content_type=receipt_file.content_type
+            )
+            attachment.save()
+
+        return response
     
     # 예: GET /transactions/create/ → 거래 생성 폼
     #     POST /transactions/create/ → 거래 생성

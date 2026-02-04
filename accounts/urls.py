@@ -10,6 +10,12 @@ app_name = 'accounts'  # URL 네임스페이스 ({% url 'accounts:login' %})
 
 urlpatterns = [
     # ========================================
+    # 루트 URL - 로그인 상태에 따라 분기
+    # ========================================
+    path('', views.HomeView.as_view(), name='home'),
+    # GET / → 로그인O: 대시보드, 로그인X: 로그인 페이지
+
+    # ========================================
     # 인증 관련 URL
     # ========================================
     path('signup/', views.SignupView.as_view(), name='signup'),
