@@ -1,0 +1,53 @@
+<!-- dashboard/templates/dashboard/delete_receipt.html -->
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block title %}영수증 삭제 확인 - 33FinanceƐƐ{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0"><i class="bi bi-exclamation-triangle"></i> 영수증 삭제 확인</h5>
+                </div>
+                <div class="card-body">
+                    <p class="mb-3">다음 영수증을 정말 삭제하시겠습니까?</p>
+
+                    <!-- 영수증 정보 -->
+                    <div class="border rounded p-3 mb-3 bg-light">
+                        <p class="mb-1"><strong>파일명:</strong> {{ object.original_name }}</p>
+                        <p class="mb-1"><strong>크기:</strong> {{ object.size|filesizeformat }}</p>
+                        <p class="mb-1"><strong>업로드 일시:</strong> {{ object.uploaded_at|date:"Y-m-d H:i" }}</p>
+                        <p class="mb-0"><strong>연결된 거래:</strong> {{ object.transaction }}</p>
+                    </div>
+
+                    <!-- 미리보기 (이미지인 경우) -->
+                    {% if object.content_type|slice:":5" == "image" %}
+                    <div class="text-center mb-3">
+                        <img src="{{ object.file.url }}" class="img-fluid rounded border" style="max-height: 200px;" alt="영수증 미리보기">
+                    </div>
+                    {% endif %}
+
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-circle"></i> 삭제된 영수증은 복구할 수 없습니다.
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <form method="post" class="flex-fill">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger w-100">
+                                <i class="bi bi-trash"></i> 삭제
+                            </button>
+                        </form>
+                        <a href="{% url 'transactions:transaction_detail' object.transaction.pk %}" class="btn btn-secondary flex-fill">
+                            <i class="bi bi-x-circle"></i> 취소
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

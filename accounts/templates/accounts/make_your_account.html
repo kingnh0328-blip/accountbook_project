@@ -1,0 +1,146 @@
+<!-- accounts/templates/accounts/make_your_account.html -->
+{% extends 'base.html' %}
+
+{% block title %}계좌 등록 필요 - 33FinanceƐƐ{% endblock %}
+
+{% block extra_css %}
+<style>
+    .welcome-card {
+        border: none;
+        border-radius: 20px;
+        box-shadow: 0 8px 40px rgba(0,0,0,0.1);
+        overflow: hidden;
+    }
+    .welcome-header {
+        background: linear-gradient(135deg, #0d6efd 0%, #6610f2 100%);
+        padding: 3rem 2rem;
+        text-align: center;
+        color: white;
+    }
+    .welcome-icon {
+        width: 100px;
+        height: 100px;
+        background: rgba(255,255,255,0.2);
+        border-radius: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+    }
+    .welcome-body {
+        padding: 2.5rem;
+        text-align: center;
+    }
+    .feature-list {
+        text-align: left;
+        max-width: 320px;
+        margin: 0 auto 2rem;
+    }
+    .feature-item {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    .feature-item:last-child {
+        border-bottom: none;
+    }
+    .feature-item i {
+        width: 32px;
+        height: 32px;
+        background: #e8f4ff;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+        color: #0d6efd;
+    }
+    .btn-start {
+        padding: 1rem 2.5rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+        transition: all 0.3s;
+    }
+    .btn-start:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(13, 110, 253, 0.4);
+    }
+    .step-indicator {
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+    }
+    .step-indicator .step {
+        width: 40px;
+        height: 4px;
+        border-radius: 2px;
+        background: #e9ecef;
+    }
+    .step-indicator .step.active {
+        background: #0d6efd;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center align-items-center" style="min-height: 70vh;">
+    <div class="col-md-8 col-lg-6 col-xl-5">
+        <div class="card welcome-card">
+            <!-- 헤더 -->
+            <div class="welcome-header">
+                <div class="welcome-icon">
+                    <i class="bi bi-wallet2 fs-1"></i>
+                </div>
+                <h2 class="fw-bold mb-2">환영합니다!</h2>
+                <p class="mb-0 opacity-75">33FinanceƐƐ을 시작하기 전에<br>첫 번째 계좌를 등록해주세요</p>
+            </div>
+
+            <!-- 본문 -->
+            <div class="welcome-body">
+                <!-- 단계 표시 -->
+                <div class="step-indicator">
+                    <div class="step active"></div>
+                    <div class="step"></div>
+                    <div class="step"></div>
+                </div>
+
+                <h5 class="fw-bold mb-3">계좌를 등록하면 이런 것들이 가능해요</h5>
+
+                <!-- 기능 목록 -->
+                <div class="feature-list">
+                    <div class="feature-item">
+                        <i class="bi bi-graph-up-arrow"></i>
+                        <span>수입과 지출을 한눈에 확인</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="bi bi-pie-chart"></i>
+                        <span>카테고리별 지출 분석</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="bi bi-calendar-check"></i>
+                        <span>월별 재정 현황 파악</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="bi bi-receipt"></i>
+                        <span>영수증 보관 및 관리</span>
+                    </div>
+                </div>
+
+                <!-- 시작 버튼 -->
+                <a href="{% url 'accounts:account_create' %}" class="btn btn-primary btn-start">
+                    <i class="bi bi-plus-circle me-2"></i>첫 계좌 만들기
+                </a>
+
+                <p class="text-muted small mt-4 mb-0">
+                    <i class="bi bi-shield-check me-1"></i>
+                    계좌 정보는 안전하게 보호됩니다
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

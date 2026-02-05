@@ -4,22 +4,38 @@
 - 담당: 팀원 A
 """
 
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, FormView
 from django.contrib.auth.mixins import LoginRequiredMixin  # 로그인 필수 처리
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, FormView
 from django.views import View
+from django.db.models import Sum
 
 from .models import Account
 from .forms import AccountForm
+from transactions.models import Transaction
 
 
 # ============================================
 # 1. 인증 관련 뷰 (회원가입, 로그인, 로그아웃)
 # ============================================
+
+class HomeView(View):
+    """
+    홈 뷰 (루트 URL)
+    - 로그인된 사용자: 대시보드로 리다이렉트
+    - 비로그인 사용자: 로그인 페이지 표시
+    """
+    def get(self, request):
+        if request.user.is_authenticated:
+            # 로그인되어 있으면 대시보드로
+            return redirect('dashboard:dashboard')
+        else:
+            # 로그인되어 있지 않으면 로그인 페이지로
+            return redirect('accounts:login')
+
 
 class SignupView(CreateView):
     """
@@ -79,7 +95,7 @@ class AccountListView(LoginRequiredMixin, ListView):
     model = Account
     template_name = 'accounts/account_list.html'
     context_object_name = 'accounts'  # 템플릿에서 {{ accounts }}로 사용
-    
+
     def get_queryset(self):
         """
         중요: 본인 계좌만 조회!
@@ -89,8 +105,42 @@ class AccountListView(LoginRequiredMixin, ListView):
             user=self.request.user,  # 현재 로그인한 사용자
             is_active=True           # 활성 계좌만
         )
-    
-    # 예: GET /accounts/ → 내 계좌 목록
+
+    def get_context_data(self, **kwargs):
+        """총 수입, 총 지출, 순자산 계산"""
+        context = super().get_context_data(**kwargs)
+
+        # 사용자의 모든 거래 조회
+        transactions = Transaction.objects.filter(user=self.request.user)
+
+        # 총 수입
+        total_income = transactions.filter(tx_type='IN').aggregate(
+            total=Sum('amount')
+        )['total'] or 0
+
+        # 총 지출
+        total_expense = transactions.filter(tx_type='OUT').aggregate(
+            total=Sum('amount')
+        )['total'] or 0
+
+
+        # 총 순자산 = 모든 계좌의 balance 합계
+        # (각 계좌의 balance는 거래 발생 시 자동 업데이트됨)
+        net_assets = Account.objects.filter(
+            user=self.request.user,
+            is_active=True
+        ).aggregate(
+            total=Sum('balance')
+        )['total'] or 0
+
+        context.update({
+            'total_income': total_income,
+            'total_expense': total_expense,
+            'net_assets': net_assets,
+        })
+
+        return context
+
 
 
 class AccountCreateView(LoginRequiredMixin, CreateView):

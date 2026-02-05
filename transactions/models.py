@@ -62,14 +62,6 @@ class Transaction(models.Model):
     - 계좌에서 발생한 입금/출금 기록
     - 프로젝트의 핵심 비즈니스 데이터
     """
-    def income(self):
-        """수입(입금) 거래만 필터링"""
-        return self.filter(tx_type='IN')
-    
-    def expense(self):
-        """지출(출금) 거래만 필터링"""
-        return self.filter(tx_type='OUT')
-    
     # 거래 타입 선택지
     TX_TYPE_CHOICES = [
         ('IN', '입금'),
@@ -157,6 +149,62 @@ class Transaction(models.Model):
         예: "출금 15,000원 - 스타벅스"
         """
         return f"{self.get_tx_type_display()} {self.amount:,.0f}원 - {self.merchant or '메모 없음'}"
+
+    def save(self, *args, **kwargs):
+        """
+        거래 저장 시 계좌 잔액 자동 업데이트
+
+        처리 로직:
+        1. 거래 수정인 경우: 기존 금액을 되돌림
+        2. 새로운 거래 금액 반영
+           - 수입(IN): 계좌 잔액 증가
+           - 지출(OUT): 계좌 잔액 감소
+        """
+        # 기존 거래인 경우 (수정)
+        if self.pk:
+            # 기존 거래 정보 조회
+            old_transaction = Transaction.objects.get(pk=self.pk)
+
+            # 기존 금액을 되돌림
+            if old_transaction.tx_type == 'IN':
+                # 기존 수입을 취소 (잔액 감소)
+                old_transaction.account.balance -= old_transaction.amount
+            else:
+                # 기존 지출을 취소 (잔액 증가)
+                old_transaction.account.balance += old_transaction.amount
+            old_transaction.account.save()
+
+        # 거래 저장
+        super().save(*args, **kwargs)
+
+        # 새로운 금액 반영
+        if self.tx_type == 'IN':
+            # 수입: 계좌 잔액 증가
+            self.account.balance += self.amount
+        else:
+            # 지출: 계좌 잔액 감소
+            self.account.balance -= self.amount
+        self.account.save()
+
+    def delete(self, *args, **kwargs):
+        """
+        거래 삭제 시 계좌 잔액 복원
+
+        처리 로직:
+        - 수입(IN) 삭제: 계좌 잔액 감소
+        - 지출(OUT) 삭제: 계좌 잔액 증가
+        """
+        # 잔액 복원
+        if self.tx_type == 'IN':
+            # 수입 삭제: 잔액 감소
+            self.account.balance -= self.amount
+        else:
+            # 지출 삭제: 잔액 증가
+            self.account.balance += self.amount
+        self.account.save()
+
+        # 거래 삭제
+        super().delete(*args, **kwargs)
 
 
 class Attachment(models.Model):

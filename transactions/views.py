@@ -77,6 +77,11 @@ class TransactionListView(LoginRequiredMixin, ListView):
         
         return queryset
     
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['accounts'] = Account.objects.all()  # 모든 계좌 정보 추가
+        return context
+    
     # 예: GET /transactions/ → 전체 거래 목록
     #     GET /transactions/?account=1 → 1번 계좌 거래만
     #     GET /transactions/?q=카페 → "카페"가 포함된 거래 검색
@@ -104,9 +109,25 @@ class TransactionCreateView(LoginRequiredMixin, CreateView):
         return kwargs
     
     def form_valid(self, form):
-        """자동으로 현재 사용자 설정"""
+        """자동으로 현재 사용자 설정 및 영수증 업로드 처리"""
         form.instance.user = self.request.user
-        return super().form_valid(form)
+        response = super().form_valid(form)
+
+        # 영수증 파일이 업로드된 경우 처리
+        receipt_file = self.request.FILES.get('receipt_file')
+        if receipt_file:
+            # Attachment 객체 생성
+            attachment = Attachment(
+                user=self.request.user,
+                transaction=self.object,
+                file=receipt_file,
+                original_name=receipt_file.name,
+                size=receipt_file.size,
+                content_type=receipt_file.content_type
+            )
+            attachment.save()
+
+        return response
     
     # 예: GET /transactions/create/ → 거래 생성 폼
     #     POST /transactions/create/ → 거래 생성
@@ -241,16 +262,11 @@ class CategoryCreateView(LoginRequiredMixin, CreateView):
     model = Category
     form_class = CategoryForm
     template_name = 'transactions/category_form.html'
-    success_url = reverse_lazy('transactions:transaction_create') # 생성 후 거래 입력창으로!
+    success_url = reverse_lazy('transactions:category_list')
 
     def form_valid(self, form):
-        form.instance.user = self.request.user # 현재 로그인한 유저로 자동 저장한다냐!
+        form.instance.user = self.request.user
         return super().form_valid(form)
-    def get_success_url(self):
-        from_type = self.request.GET.get('from_type')
-        if from_type:
-            return reverse_lazy('transactions:transaction_create') + f'?type={from_type}'
-        return reverse_lazy('transactions:transaction_create')
 
 class CategoryListView(LoginRequiredMixin, ListView):
     model = Category

@@ -1,11 +1,11 @@
-# AccountBook 프로젝트
+# 33FinanceƐƐ 프로젝트
 
 > 계좌 기반 거래 내역 관리 시스템 (Django + PostgreSQL)
 
 ![Python](https://img.shields.io/badge/Python-3.11-blue)
 ![Django](https://img.shields.io/badge/Django-4.2-green)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-blue)
-![CI](https://github.com/your-username/accountbook/workflows/AccountBook%20CI/badge.svg)
+![CI](https://github.com/your-username/33financeƐƐ/workflows/33FinanceƐƐ%20CI/badge.svg)
 
 ## 📋 프로젝트 개요
 
@@ -61,8 +61,8 @@ User (Django 기본 User)
 ### 1. 저장소 클론
 
 ```bash
-git clone https://github.com/your-username/accountbook.git
-cd accountbook
+git clone https://github.com/your-username/33financeƐƐ.git
+cd 33financeƐƐ
 ```
 
 ### 2. 가상환경 생성 및 활성화
@@ -91,7 +91,7 @@ pip install -r requirements.txt
 SECRET_KEY=your-secret-key-here
 DEBUG=True
 DB_ENGINE=postgresql
-DB_NAME=accountbook
+DB_NAME=33financeƐƐ
 DB_USER=your_db_user
 DB_PASSWORD=your_db_password
 DB_HOST=localhost
@@ -108,9 +108,9 @@ PostgreSQL을 설치하고 데이터베이스를 생성:
 psql -U postgres
 
 # 데이터베이스 생성
-CREATE DATABASE accountbook;
+CREATE DATABASE 33financeƐƐ;
 CREATE USER your_db_user WITH PASSWORD 'your_db_password';
-GRANT ALL PRIVILEGES ON DATABASE accountbook TO your_db_user;
+GRANT ALL PRIVILEGES ON DATABASE 33financeƐƐ TO your_db_user;
 \q
 ```
 
@@ -143,8 +143,8 @@ python manage.py runserver
 ## 📁 프로젝트 구조
 
 ```
-accountbook/
-├── accountbook/          # 프로젝트 설정
+33financeƐƐ/
+├── 33financeƐƐ/          # 프로젝트 설정
 │   ├── settings.py      # Django 설정
 │   ├── urls.py          # 메인 URL 라우팅
 │   └── wsgi.py
@@ -269,4 +269,4 @@ MIT License
 
 ---
 
-**Made with ❤️ by AccountBook Team**
+**Made with ❤️ by 33FinanceƐƐ Team**

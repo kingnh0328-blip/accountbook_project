@@ -1,20 +1,35 @@
 {% extends 'base.html' %}
 
+{% block title %}카테고리 삭제 확인 - 33FinanceƐƐ{% endblock %}
+
 {% block content %}
-<div class="container mt-5">
-    <div class="card border-danger">
-        <div class="card-header bg-danger text-white">
-            <h4>카테고리 삭제 확인 ⚠️</h4>
-        </div>
-        <div class="card-body text-center">
-            <p>"<strong>{{ object.name }}</strong>" 카테고리를 삭제하시겠습니까?</p>
-            <p class="text-muted small">이 카테고리를 사용하는 거래 내역에서 카테고리가 사라질 수 있어요! 🐾</p>
-            
-            <form method="post">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-danger">네, 삭제할래요!</button>
-                <a href="{% url 'transactions:transaction_list' %}" class="btn btn-secondary">아뇨, 취소할게요!</a>
-            </form>
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0"><i class="bi bi-exclamation-triangle"></i> 카테고리 삭제 확인</h5>
+                </div>
+                <div class="card-body">
+                    <p class="mb-3">"<strong>{{ object.name }}</strong>" 카테고리를 삭제하시겠습니까?</p>
+
+                    <div class="alert alert-warning">
+                        <i class="bi bi-info-circle"></i> 이 카테고리를 사용하는 거래 내역에서 카테고리 정보가 제거됩니다.
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <form method="post" class="flex-fill">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger w-100">
+                                <i class="bi bi-trash"></i> 삭제
+                            </button>
+                        </form>
+                        <a href="{% url 'transactions:category_list' %}" class="btn btn-secondary flex-fill">
+                            <i class="bi bi-x-circle"></i> 취소
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
