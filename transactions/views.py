@@ -10,6 +10,10 @@ from django.urls import reverse_lazy
 from django.db.models import Q  # OR 조건 검색용
 from django.shortcuts import get_object_or_404, redirect
 from django.views import View
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+from django.contrib.auth.decorators import login_required
+import json
 
 from .models import Transaction, Attachment, Category
 from accounts.models import Account
@@ -280,11 +284,56 @@ class CategoryListView(LoginRequiredMixin, ListView):
 class CategoryDeleteView(LoginRequiredMixin, DeleteView):
     model = Category
     # 삭제가 끝나면 카테고리 관리 페이지나 거래 목록으로 돌려보낸다냐!
-    success_url = reverse_lazy('transactions:transaction_list') 
-    
+    success_url = reverse_lazy('transactions:transaction_list')
+
     # 💡 보안상 본인 카테고리만 삭제할 수 있게 쿼리셋을 제한하자냐!
     def get_queryset(self):
         return Category.objects.filter(user=self.request.user)
+
+
+@login_required
+@require_POST
+def category_create_ajax(request):
+    """
+    AJAX용 카테고리 생성 API
+    - 모달에서 카테고리 추가 시 사용
+    - JSON 응답 반환
+    """
+    try:
+        data = json.loads(request.body)
+        name = data.get('name', '').strip()
+        category_type = data.get('type', 'BOTH')
+
+        # 유효성 검사
+        if not name:
+            return JsonResponse({'success': False, 'error': '카테고리명을 입력해주세요.'}, status=400)
+
+        if category_type not in ['IN', 'OUT', 'BOTH']:
+            return JsonResponse({'success': False, 'error': '잘못된 타입입니다.'}, status=400)
+
+        # 중복 검사 (같은 사용자의 같은 이름 카테고리)
+        if Category.objects.filter(user=request.user, name=name).exists():
+            return JsonResponse({'success': False, 'error': '이미 같은 이름의 카테고리가 있습니다.'}, status=400)
+
+        # 카테고리 생성
+        category = Category.objects.create(
+            user=request.user,
+            name=name,
+            type=category_type
+        )
+
+        return JsonResponse({
+            'success': True,
+            'category': {
+                'id': category.id,
+                'name': category.name,
+                'type': category.type,
+                'display': str(category)  # "식비 (지출)" 형식
+            }
+        })
+
+    except json.JSONDecodeError:
+        return JsonResponse({'success': False, 'error': '잘못된 요청입니다.'}, status=400)
 
 # ============================================
 # URL 패턴과의 연결 예시
