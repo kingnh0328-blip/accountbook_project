@@ -131,11 +131,11 @@ class TransactionAdmin(admin.ModelAdmin):
         """금액 표시 (내 버전 - 컬러 + 굵게)"""
         color = '#28a745' if obj.tx_type == 'IN' else '#dc3545'
         sign = '+' if obj.tx_type == 'IN' else '-'
+        formatted_amount = f"{sign}{obj.amount:,.0f}원"
         return format_html(
-            '<span style="color: {}; font-weight: bold;">{}{:,.0f}원</span>',
+            '<span style="color: {}; font-weight: bold;">{}</span>',
             color,
-            sign,
-            obj.amount
+            formatted_amount
         )
     amount_display.short_description = '금액'
     amount_display.admin_order_field = 'amount'
