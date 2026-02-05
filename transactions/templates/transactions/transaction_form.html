@@ -1,7 +1,7 @@
 <!-- transactions/templates/transactions/transaction_form.html -->
 {% extends 'base.html' %}
 
-{% block title %}거래 {% if object %}수정{% else %}생성{% endif %} - AccountBook{% endblock %}
+{% block title %}거래 {% if object %}수정{% else %}생성{% endif %} - 33FinanceƐƐ{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center">
@@ -54,19 +54,25 @@
             
             <div class="mb-3">
                 <div class="d-flex justify-content-between align-items-center mb-1">
-    <label for="{{ form.category.id_for_label }}" class="form-label mb-0">카테고리</label>
-
-    <div class="d-flex gap-1">
-        <a href="{% url 'transactions:category_create' %}?from_type={{ request.GET.type }}" class="btn btn-sm btn-outline-success">+ 새 카테고리</a>
-        <a href="{% url 'transactions:category_list' %}" class="btn btn-sm btn-outline-secondary">🗑️ 관리/삭제</a>
-    </div>
-</div>
+                    <label for="{{ form.category.id_for_label }}" class="form-label mb-0">카테고리</label>
+                    <div class="d-flex gap-1">
+                        <a href="{% url 'transactions:category_create' %}?from_type={{ request.GET.type }}" class="btn btn-sm btn-outline-success">+ 새 카테고리</a>
+                        <a href="{% url 'transactions:category_list' %}" class="btn btn-sm btn-outline-secondary">관리/삭제</a>
+                    </div>
+                </div>
                 {{ form.category }}
                 {% if form.category.errors %}
-                <div class="text-danger">{{ form.category.errors }}</div>
+                    <div class="text-danger">{{ form.category.errors }}</div>
                 {% endif %}
-                <small class="text-muted">원하는 카테고리가 없으면 위 버튼을 눌러봐! 😼</small>
+                <small class="text-muted">원하는 카테고리가 없으면 위 버튼으로 추가하세요.</small>
+            </div>
 
+            <div class="mb-3">
+                <label for="{{ form.memo.id_for_label }}" class="form-label">메모</label>
+                {{ form.memo }}
+                {% if form.memo.errors %}
+                    <div class="text-danger">{{ form.memo.errors }}</div>
+                {% endif %}
             </div>
 
             <!-- 영수증 업로드 (선택사항) -->

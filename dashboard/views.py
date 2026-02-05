@@ -16,8 +16,8 @@ from datetime import datetime
 import calendar
 from collections import defaultdict
 
-from transactions.models import Transaction, Category, Attachment  # ← 변경!
-from accounts.models import Account  # ← 추가!
+from transactions.models import Transaction, Category, Attachment  
+from accounts.models import Account  
 from .forms import AttachmentForm
 
 
@@ -189,7 +189,6 @@ class DashboardView(LoginRequiredMixin, TemplateView):
             'selected_account_id': account_id,
             'recent_transactions': recent_transactions,
         })
-
         return context
 
 

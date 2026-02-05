@@ -1,47 +1,155 @@
 <!-- accounts/templates/accounts/signup.html -->
 {% extends 'base.html' %}
 
-{% block title %}회원가입 - AccountBook{% endblock %}
+{% block title %}회원가입 - 33FinanceƐƐ{% endblock %}
+
+{% block extra_css %}
+<style>
+    .signup-card {
+        border: none;
+        border-radius: 16px;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    }
+    .signup-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    .signup-header .logo {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+    .signup-header h2 {
+        font-weight: 700;
+        color: #111;
+    }
+    .signup-header p {
+        color: #6c757d;
+    }
+    .form-control {
+        width: 100%;
+        padding: 0.75rem 5rem 0.75rem 5rem;
+        border-radius: 8px;
+        border: 1px solid #dee2e6;
+    }
+    .form-control:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
+    }
+    .input-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #6c757d;
+    }
+    .btn-signup {
+        padding: 0.75rem;
+        font-weight: 600;
+        border-radius: 8px;
+    }
+    .password-hint {
+        font-size: 0.75rem;
+        color: #6c757d;
+        margin-top: 0.25rem;
+    }
+    .divider {
+        display: flex;
+        align-items: center;
+        margin: 1.5rem 0;
+    }
+    .divider::before,
+    .divider::after {
+        content: '';
+        flex: 1;
+        border-bottom: 1px solid #dee2e6;
+    }
+    .divider span {
+        padding: 0 1rem;
+        color: #6c757d;
+        font-size: 0.875rem;
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-body">
-                <h2 class="card-title text-center mb-4">회원가입</h2>
-                
+<div class="row justify-content-center align-items-center" style="min-height: 70vh;">
+    <div class="col-md-5 col-lg-4">
+        <div class="card signup-card">
+            <div class="card-body p-4 p-md-5">
+                <!-- 헤더 -->
+                <div class="signup-header">
+                    <div class="logo">💰</div>
+                    <h2>회원가입</h2>
+                    <p>나만의 자산 관리, 지금 시작해보세요</p>
+                </div>
+
+                <!-- 회원가입 폼 -->
                 <form method="post">
                     {% csrf_token %}
-                    
-                    <div class="mb-3">
-                        <label for="{{ form.username.id_for_label }}" class="form-label">사용자명</label>
-                        {{ form.username }}
+
+                    <!-- 사용자명 입력 -->
+                    <div class="mb-3 w-100">
+                        <label for="{{ form.username.id_for_label }}" class="form-label fw-semibold">아이디</label>
+                        <div class="position-relative">
+                            {{ form.username }}
+                        </div>
                         {% if form.username.errors %}
-                            <div class="text-danger">{{ form.username.errors }}</div>
+                            <div class="text-danger small mt-1">{{ form.username.errors }}</div>
                         {% endif %}
                     </div>
-                    
-                    <div class="mb-3">
-                        <label for="{{ form.password1.id_for_label }}" class="form-label">비밀번호</label>
-                        {{ form.password1 }}
+
+                    <!-- 비밀번호 입력 -->
+                    <div class="mb-3 w-100">
+                        <label for="{{ form.password1.id_for_label }}" class="form-label fw-semibold">비밀번호</label>
+                        <div class="position-relative">
+                            {{ form.password1 }}
+                        </div>
+                        <div class="password-hint">
+                            <i class="bi bi-info-circle me-1"></i>
+                            8자 이상의 영문, 숫자를 포함해주세요
+                        </div>
                         {% if form.password1.errors %}
-                            <div class="text-danger">{{ form.password1.errors }}</div>
+                            <div class="text-danger small mt-1">{{ form.password1.errors }}</div>
                         {% endif %}
                     </div>
-                    
-                    <div class="mb-3">
-                        <label for="{{ form.password2.id_for_label }}" class="form-label">비밀번호 확인</label>
-                        {{ form.password2 }}
+
+                    <!-- 비밀번호 확인 -->
+                    <div class="mb-4 w-100">
+                        <label for="{{ form.password2.id_for_label }}" class="form-label fw-semibold">비밀번호 확인</label>
+                        <div class="position-relative">
+
+                            {{ form.password2 }}
+                        </div>
                         {% if form.password2.errors %}
-                            <div class="text-danger">{{ form.password2.errors }}</div>
+                            <div class="text-danger small mt-1">{{ form.password2.errors }}</div>
                         {% endif %}
                     </div>
-                    
-                    <button type="submit" class="btn btn-primary w-100">가입하기</button>
+
+                    <!-- 가입 버튼 -->
+                    <button type="submit" class="btn btn-primary btn-signup w-100">
+                        가입하기
+                        <i class="bi bi-arrow-right ms-1"></i>
+                    </button>
                 </form>
-                
-                <div class="text-center mt-3">
-                    <a href="{% url 'accounts:login' %}">이미 계정이 있으신가요? 로그인</a>
+
+                <style>    /* 폼 필드 너비를 100%로 맞추기 */
+                    #id_username,
+                    #id_password1,
+                    #id_password2 {
+                        width: 100% !important;
+                    }
+                </style>
+
+                <!-- 로그인 링크 -->
+                <div class="divider">
+                    <span>또는</span>
+                </div>
+
+                <div class="text-center">
+                    <p class="text-muted mb-0">
+                        이미 계정이 있으신가요?
+                        <a href="{% url 'accounts:login' %}" class="text-primary fw-semibold text-decoration-none">로그인</a>
+                    </p>
                 </div>
             </div>
         </div>

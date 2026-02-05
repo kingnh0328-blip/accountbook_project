@@ -3,11 +3,54 @@
 {% load static %}
 {% load humanize %}
 
-{% block title %}대시보드 - AccountBook{% endblock %}
+{% block title %}대시보드 - 33Finanace{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'dashboard/css/dashboard.css' %}">
+<style>
+    .stat-card {
+        border-left: 4px solid;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .stat-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .stat-card.income { border-left-color: #28a745; }
+    .stat-card.expense { border-left-color: #dc3545; }
+    .stat-card.balance { border-left-color: #0d6efd; }
+    .stat-card .stat-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .stat-card.income .stat-icon { background: rgba(40, 167, 69, 0.1); color: #28a745; }
+    .stat-card.expense .stat-icon { background: rgba(220, 53, 69, 0.1); color: #dc3545; }
+    .stat-card.balance .stat-icon { background: rgba(13, 110, 253, 0.1); color: #0d6efd; }
+    .month-selector {
+        background: #fff;
+        border-radius: 8px;
+        padding: 8px 16px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .transaction-row:hover {
+        background-color: #f8f9fa;
+    }
+    .category-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<link rel="stylesheet" href="{% static 'dashboard/css/dashboard.css' %}">
-
 <!-- ========================================
      대시보드 메인 페이지
      - 월별 수입/지출 요약
@@ -16,68 +59,93 @@
      - 최근 거래 목록
 ========================================= -->
 
-<!-- ========================================
-     1. 계좌 필터
-     - 전체 계좌 또는 특정 계좌 선택
-========================================= -->
-<div class="mb-3">
-    <form method="get" class="row g-2">
+<!-- 페이지 헤더 -->
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold mb-0">
+        <!-- <i class="bi bi-speedometer2 me-2"></i> -->
+        대시보드
+    </h2>
+</div>
+
+<!-- 계좌 필터 -->
+<div class="mb-4">
+    <form method="get" class="row g-2 align-items-end">
         <div class="col-auto">
-            <label for="account" class="form-label">계좌 선택</label>
-        </div>
-        <div class="col-auto">
+            <label for="account" class="form-label small text-muted mb-1">계좌 선택</label>
             <select name="account" id="account" class="form-select form-select-sm">
                 <option value="">전체 계좌</option>
                 {% for account in accounts %}
                 <option value="{{ account.id }}" {% if selected_account_id|stringformat:"s" == account.id|stringformat:"s" %}selected{% endif %}>
-                    {{ account.name }}
+                    {{ account.name }} ({{ account.bank_name }})
                 </option>
                 {% endfor %}
             </select>
         </div>
         <div class="col-auto">
             <input type="hidden" name="month" value="{{ year }}-{{ month|stringformat:'02d' }}">
-            <button type="submit" class="btn btn-primary btn-sm">조회</button>
+            <button type="submit" class="btn btn-primary btn-sm">
+                <i class="bi bi-search me-1"></i>조회
+            </button>
         </div>
     </form>
 </div>
 
-<!-- 계좌 총 수입,지출 요약 -->
-<div class="row mb-4">
+<!-- 통계 카드 -->
+<div class="row g-4 mb-4">
     <div class="col-md-4">
-        <div class="card text-white bg-success">
-            <div class="card-body">
-                <h5 class="card-title">총 수입</h5>
-                <h3>{{ total_income|floatformat:0|intcomma }}원</h3>
+        <div class="card stat-card income h-100">
+            <div class="card-body d-flex align-items-center">
+                <div class="stat-icon me-3">
+                    <i class="bi bi-arrow-down-circle fs-4"></i>
+                </div>
+                <div>
+                    <p class="text-muted small mb-1">총 수입</p>
+                    <h4 class="mb-0 text-success fw-bold">+{{ total_income|floatformat:0|intcomma }}원</h4>
+                </div>
             </div>
         </div>
     </div>
     <div class="col-md-4">
-        <div class="card text-white bg-danger">
-            <div class="card-body">
-                <h5 class="card-title">총 지출</h5>
-                <h3>{{ total_expense|floatformat:0|intcomma }}원</h3>
+        <div class="card stat-card expense h-100">
+            <div class="card-body d-flex align-items-center">
+                <div class="stat-icon me-3">
+                    <i class="bi bi-arrow-up-circle fs-4"></i>
+                </div>
+                <div>
+                    <p class="text-muted small mb-1">총 지출</p>
+                    <h4 class="mb-0 text-danger fw-bold">-{{ total_expense|floatformat:0|intcomma }}원</h4>
+                </div>
             </div>
         </div>
     </div>
     <div class="col-md-4">
-        <div class="card text-white {% if balance >= 0 %}bg-primary{% else %}bg-warning{% endif %}">
-            <div class="card-body">
-                <h5 class="card-title">현재 금액</h5>
-                <h3>{{ balance|floatformat:0|intcomma }}원</h3>
+        <div class="card stat-card balance h-100">
+            <div class="card-body d-flex align-items-center">
+                <div class="stat-icon me-3">
+                    <i class="bi bi-wallet2 fs-4"></i>
+                </div>
+                <div>
+                    <p class="text-muted small mb-1">이번 달 순수익</p>
+                    <h4 class="mb-0 {% if balance >= 0 %}text-primary{% else %}text-warning{% endif %} fw-bold">
+                        {{ balance|floatformat:0|intcomma }}원
+                    </h4>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <!-- 카테고리별 지출 & 달력 -->
-<div class="row mb-4">
+<div class="row g-4 mb-4">
     <!-- 왼쪽: 카테고리별 지출 그래프 -->
     <div class="col-lg-6">
         <div class="card h-100">
+            <div class="card-header bg-white border-bottom">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-pie-chart me-2"></i>카테고리별 지출 Top 5
+                </h5>
+            </div>
             <div class="card-body">
-                <h5 class="card-title">카테고리별 지출 Top 5</h5>
-
                 {% if category_summary %}
                     <!-- 원형 그래프 -->
                     <div class="chart-container">
@@ -86,35 +154,41 @@
 
                     <!-- 범례 테이블 -->
                     <div class="table-responsive mt-3">
-                        <table class="table table-sm">
-                            <thead>
+                        <table class="table table-sm table-hover">
+                            <thead class="table-light">
                                 <tr>
                                     <th>카테고리</th>
-                                    <th>금액</th>
-                                    <th>건수</th>
-                                    <th>비율</th>
+                                    <th class="text-end">금액</th>
+                                    <th class="text-center">건수</th>
+                                    <th class="text-end">비율</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for item in category_summary %}
                                 <tr>
-                                    <td>{{ item.category__name }}</td>
-                                    <td>{{ item.total|floatformat:0|intcomma }}원</td>
-                                    <td>{{ item.count }}건</td>
-                                    <td>{{ item.expense_ratio|floatformat:1 }}%</td>
+                                    <td>
+                                        <span class="badge bg-secondary me-1">{{ forloop.counter }}</span>
+                                        {{ item.category__name }}
+                                    </td>
+                                    <td class="text-end text-danger">{{ item.total|floatformat:0|intcomma }}원</td>
+                                    <td class="text-center">{{ item.count }}건</td>
+                                    <td class="text-end">{{ item.expense_ratio|floatformat:1 }}%</td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
                         </table>
                     </div>
                 {% else %}
-                    <p class="text-muted">이번 달 지출 내역이 없습니다.</p>
+                    <div class="text-center py-5">
+                        <i class="bi bi-inbox text-muted" style="font-size: 3rem;"></i>
+                        <p class="text-muted mt-3">이번 달 지출 내역이 없습니다.</p>
+                    </div>
                 {% endif %}
 
                 <!-- 카테고리 관리 버튼 -->
                 <div class="text-center mt-3">
                     <a href="{% url 'transactions:category_list' %}" class="btn btn-outline-primary btn-sm">
-                        📁 카테고리 관리
+                        <i class="bi bi-folder me-1"></i>카테고리 관리
                     </a>
                 </div>
             </div>
@@ -124,47 +198,48 @@
     <!-- 오른쪽: 달력 -->
     <div class="col-lg-6">
         <div class="card h-100">
+            <div class="card-header bg-white border-bottom">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-calendar3 me-2"></i>{{ year }}년 {{ month }}월
+                    </h5>
+                    <form method="get" class="d-flex gap-2">
+                        <input type="month" name="month" class="form-control form-control-sm"
+                               value="{{ year }}-{{ month|stringformat:'02d' }}" style="width: auto;">
+                        {% if selected_account_id %}
+                        <input type="hidden" name="account" value="{{ selected_account_id }}">
+                        {% endif %}
+                        <button type="submit" class="btn btn-primary btn-sm">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
             <div class="card-body">
-                <!-- 월 선택 필터 -->
-                <form method="get" class="mb-3">
-                    <div class="row g-2 align-items-center">
-                        <div class="col-auto">
-                            <h5 class="card-title mb-0">{{ year }}년 {{ month }}월</h5>
-                        </div>
-                        <div class="col">
-                            <input type="month" name="month" id="month" class="form-control form-control-sm"
-                                   value="{{ year }}-{{ month|stringformat:'02d' }}">
-                        </div>
-                        <div class="col-auto">
-                            <button type="submit" class="btn btn-primary btn-sm">조회</button>
-                        </div>
-                    </div>
-                </form>
-
                 <!-- 범례 -->
-                <div class="mb-2">
-                    <span class="me-3">
-                        <strong class="text-income">수입:</strong>
-                        <span class="text-income">{{ total_income|floatformat:0|intcomma }}원</span>
+                <div class="d-flex justify-content-center gap-4 mb-3">
+                    <span>
+                        <i class="bi bi-circle-fill text-success me-1" style="font-size: 0.5rem;"></i>
+                        <small>수입: <strong class="text-success">{{ total_income|floatformat:0|intcomma }}원</strong></small>
                     </span>
                     <span>
-                        <strong class="text-expense">지출:</strong>
-                        <span class="text-expense">{{ total_expense|floatformat:0|intcomma }}원</span>
+                        <i class="bi bi-circle-fill text-danger me-1" style="font-size: 0.5rem;"></i>
+                        <small>지출: <strong class="text-danger">{{ total_expense|floatformat:0|intcomma }}원</strong></small>
                     </span>
                 </div>
 
                 <!-- 달력 -->
                 <div class="calendar-container">
-                    <table class="table table-bordered table-sm calendar-table">
-                        <thead>
+                    <table class="table table-bordered table-sm calendar-table mb-0">
+                        <thead class="table-light">
                             <tr>
-                                <th class="text-center">일</th>
+                                <th class="text-center text-danger">일</th>
                                 <th class="text-center">월</th>
                                 <th class="text-center">화</th>
                                 <th class="text-center">수</th>
                                 <th class="text-center">목</th>
                                 <th class="text-center">금</th>
-                                <th class="text-center">토</th>
+                                <th class="text-center text-primary">토</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -194,60 +269,65 @@
 </div>
 
 <!-- 최근 거래 목록 -->
-<div class="row mt-4">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-body">
-                {% if recent_transactions %}
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5 class="card-title mb-0">최근 거래 목록</h5>
-                    <div>
-                        <a href="{% url 'transactions:transaction_create' %}" class="btn btn-primary btn-sm me-2">
-                            <i class="bi bi-plus-circle"></i> 새 거래 생성
-                        </a>
-                        <a href="{% url 'transactions:transaction_list' %}" class="btn btn-secondary btn-sm">
-                            <i class="bi bi-list-ul"></i> 모든 거래 내역 보기
-                        </a>
-                    </div>
-                </div>
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>날짜</th>
-                                <th>카테고리</th>
-                                <th>가맹점/거래처</th>
-                                <th class="text-end">금액</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for transaction in recent_transactions %}
-                            <tr>
-                                <td>{{ transaction.occurred_at|date:"Y-m-d H:i" }}</td>
-                                <td>{{ transaction.category.name|default:"-" }}</td>
-                                <td>{{ transaction.merchant|default:"-" }}</td>
-                                <td class="text-end">
-                                    <strong class="{% if transaction.tx_type == 'IN' %}text-income{% else %}text-expense{% endif %}">
-                                        {% if transaction.tx_type == 'IN' %}+{% else %}-{% endif %}
-                                        {{ transaction.amount|floatformat:0|intcomma }}원
-                                    </strong>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-                {% else %}
-                <div class="text-center py-5">
-                    <i class="bi bi-inbox icon-empty"></i>
-                    <p class="text-muted mt-3 mb-3">거래내역이 없습니다. 새로운 거래내역을 생성하세요</p>
-                    <a href="{% url 'transactions:transaction_create' %}" class="btn btn-primary">
-                        <i class="bi bi-plus-circle"></i> 새 거래 생성
-                    </a>
-                </div>
-                {% endif %}
+<div class="card">
+    <div class="card-header bg-white border-bottom">
+        <div class="d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0">
+                <i class="bi bi-clock-history me-2"></i>최근 거래
+            </h5>
+            {% if recent_transactions %}
+            <div class="d-flex gap-2">
+                <a href="{% url 'transactions:transaction_create' %}" class="btn btn-primary btn-sm">
+                    <i class="bi bi-plus-circle me-1"></i>새 거래
+                </a>
+                <a href="{% url 'transactions:transaction_list' %}" class="btn btn-outline-secondary btn-sm">
+                    전체 보기 <i class="bi bi-arrow-right"></i>
+                </a>
             </div>
+            {% endif %}
         </div>
+    </div>
+    <div class="card-body p-0">
+        {% if recent_transactions %}
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th style="width: 120px;">날짜</th>
+                        <th>카테고리</th>
+                        <th>가맹점/거래처</th>
+                        <th class="text-end" style="width: 150px;">금액</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for transaction in recent_transactions %}
+                    <tr class="transaction-row">
+                        <td class="text-muted">{{ transaction.occurred_at|date:"m/d H:i" }}</td>
+                        <td>
+                            <span class="badge {% if transaction.tx_type == 'IN' %}bg-success{% else %}bg-danger{% endif %} bg-opacity-10 {% if transaction.tx_type == 'IN' %}text-success{% else %}text-danger{% endif %}">
+                                {{ transaction.category.name|default:"미분류" }}
+                            </span>
+                        </td>
+                        <td>{{ transaction.merchant|default:"-" }}</td>
+                        <td class="text-end">
+                            <strong class="{% if transaction.tx_type == 'IN' %}text-success{% else %}text-danger{% endif %}">
+                                {% if transaction.tx_type == 'IN' %}+{% else %}-{% endif %}{{ transaction.amount|floatformat:0|intcomma }}원
+                            </strong>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <i class="bi bi-inbox text-muted" style="font-size: 3rem;"></i>
+            <p class="text-muted mt-3 mb-3">거래내역이 없습니다.</p>
+            <a href="{% url 'transactions:transaction_create' %}" class="btn btn-primary">
+                <i class="bi bi-plus-circle me-1"></i>새 거래 생성
+            </a>
+        </div>
+        {% endif %}
     </div>
 </div>
 {% endblock %}
@@ -282,7 +362,7 @@
 
     // 차트 생성
     new Chart(ctx, {
-        type: 'pie',
+        type: 'doughnut',
         data: {
             labels: labels,
             datasets: [{
@@ -295,11 +375,13 @@
         options: {
             responsive: true,
             maintainAspectRatio: true,
+            cutout: '60%',
             plugins: {
                 legend: {
                     position: 'bottom',
                     labels: {
                         padding: 15,
+                        usePointStyle: true,
                         font: {
                             size: 12
                         }
