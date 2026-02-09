@@ -301,16 +301,11 @@ class CategoryCreateView(LoginRequiredMixin, CreateView):
     model = Category
     form_class = CategoryForm
     template_name = 'transactions/category_form.html'
-    success_url = reverse_lazy('transactions:transaction_create') # 생성 후 거래 입력창으로!
+    success_url = reverse_lazy('transactions:category_list')
 
     def form_valid(self, form):
-        form.instance.user = self.request.user # 현재 로그인한 유저로 자동 저장한다냐!
+        form.instance.user = self.request.user
         return super().form_valid(form)
-    def get_success_url(self):
-        from_type = self.request.GET.get('from_type')
-        if from_type:
-            return reverse_lazy('transactions:transaction_create') + f'?type={from_type}'
-        return reverse_lazy('transactions:transaction_create')
 
 class CategoryListView(LoginRequiredMixin, ListView):
     model = Category
@@ -324,11 +319,56 @@ class CategoryListView(LoginRequiredMixin, ListView):
 class CategoryDeleteView(LoginRequiredMixin, DeleteView):
     model = Category
     # 삭제가 끝나면 카테고리 관리 페이지나 거래 목록으로 돌려보낸다냐!
-    success_url = reverse_lazy('transactions:transaction_list') 
-    
+    success_url = reverse_lazy('transactions:transaction_list')
+
     # 💡 보안상 본인 카테고리만 삭제할 수 있게 쿼리셋을 제한하자냐!
     def get_queryset(self):
         return Category.objects.filter(user=self.request.user)
+
+
+@login_required
+@require_POST
+def category_create_ajax(request):
+    """
+    AJAX용 카테고리 생성 API
+    - 모달에서 카테고리 추가 시 사용
+    - JSON 응답 반환
+    """
+    try:
+        data = json.loads(request.body)
+        name = data.get('name', '').strip()
+        category_type = data.get('type', 'BOTH')
+
+        # 유효성 검사
+        if not name:
+            return JsonResponse({'success': False, 'error': '카테고리명을 입력해주세요.'}, status=400)
+
+        if category_type not in ['IN', 'OUT', 'BOTH']:
+            return JsonResponse({'success': False, 'error': '잘못된 타입입니다.'}, status=400)
+
+        # 중복 검사 (같은 사용자의 같은 이름 카테고리)
+        if Category.objects.filter(user=request.user, name=name).exists():
+            return JsonResponse({'success': False, 'error': '이미 같은 이름의 카테고리가 있습니다.'}, status=400)
+
+        # 카테고리 생성
+        category = Category.objects.create(
+            user=request.user,
+            name=name,
+            type=category_type
+        )
+
+        return JsonResponse({
+            'success': True,
+            'category': {
+                'id': category.id,
+                'name': category.name,
+                'type': category.type,
+                'display': str(category)  # "식비 (지출)" 형식
+            }
+        })
+
+    except json.JSONDecodeError:
+        return JsonResponse({'success': False, 'error': '잘못된 요청입니다.'}, status=400)
 
 # ============================================
 # URL 패턴과의 연결 예시

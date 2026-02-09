@@ -1,46 +1,197 @@
 <!-- accounts/templates/accounts/account_detail.html -->
 {% extends 'base.html' %}
 {% load humanize %}
-{% block title %}{{ account.name }} - AccountBook{% endblock %}
+
+{% block title %}{{ account.name }} - 33FinanceƐƐ{% endblock %}
+
+{% block extra_css %}
+<style>
+    .account-header {
+        background: linear-gradient(135deg, #0d6efd, #6610f2);
+        border-radius: 16px 16px 0 0;
+        padding: 2rem;
+        color: white;
+    }
+    .account-card {
+        border: none;
+        border-radius: 16px;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.1);
+        overflow: hidden;
+    }
+    .bank-icon {
+        width: 64px;
+        height: 64px;
+        background: rgba(255,255,255,0.2);
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .info-table th {
+        width: 35%;
+        background-color: #f8f9fa;
+        font-weight: 600;
+        color: #495057;
+        border: none;
+        padding: 1rem 1.25rem;
+    }
+    .info-table td {
+        border: none;
+        padding: 1rem 1.25rem;
+    }
+    .info-table tr {
+        border-bottom: 1px solid #e9ecef;
+    }
+    .info-table tr:last-child {
+        border-bottom: none;
+    }
+    .balance-display {
+        font-size: 2rem;
+        font-weight: 700;
+    }
+    .action-buttons .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+    }
+    .stat-mini {
+        background: #f8f9fa;
+        border-radius: 12px;
+        padding: 1.25rem;
+        text-align: center;
+    }
+    .stat-mini .stat-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-8">
-        <h2>{{ account.name }}</h2>
+<!-- 뒤로가기 -->
+<div class="mb-4">
+    <a href="{% url 'accounts:account_list' %}" class="text-decoration-none text-muted">
+        <i class="bi bi-arrow-left me-1"></i>계좌 목록으로 돌아가기
+    </a>
+</div>
 
-        <div class="card mt-4">
-            <div class="card-body">
-                <h5 class="card-title">계좌 정보</h5>
-                <table class="table">
-                    <tr>
-                        <th width="30%">은행</th>
-                        <td>{{ account.bank_name }}</td>
-                    </tr>
-                    <tr>
-                        <th>계좌번호</th>
-                        <td>{{ account.masked_account_number }}</td>
-                    </tr>
-                    <tr>
-                        <th>잔액</th>
-                        <td>{{ account.balance|floatformat:0|intcomma }}원</td>
-                    </tr>
-                    <tr>
-                        <th>생성일</th>
-                        <td>{{ account.created_at|date:"Y-m-d H:i" }}</td>
-                    </tr>
-                    <tr>
-                        <th>수정일</th>
-                        <td>{{ account.updated_at|date:"Y-m-d H:i" }}</td>
-                    </tr>
+<div class="row g-4">
+    <!-- 메인 계좌 정보 카드 -->
+    <div class="col-lg-8">
+        <div class="card account-card">
+            <!-- 계좌 헤더 -->
+            <div class="account-header">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="bank-icon me-3">
+                        <i class="bi bi-bank2 fs-3"></i>
+                    </div>
+                    <div>
+                        <h3 class="mb-0 fw-bold">{{ account.name }}</h3>
+                        <p class="mb-0 opacity-75">{{ account.bank_name }}</p>
+                    </div>
+                </div>
+                <div>
+                    <small class="opacity-75 d-block mb-1">현재 잔액</small>
+                    <div class="balance-display">
+                        {{ account.balance|floatformat:0|intcomma }}원
+                    </div>
+                </div>
+            </div>
+
+            <!-- 계좌 상세 정보 -->
+            <div class="card-body p-0">
+                <table class="table info-table mb-0">
+                    <tbody>
+                        <tr>
+                            <th>
+                                <i class="bi bi-building me-2 text-primary"></i>은행
+                            </th>
+                            <td class="fw-medium">{{ account.bank_name }}</td>
+                        </tr>
+                        <tr>
+                            <th>
+                                <i class="bi bi-credit-card me-2 text-primary"></i>계좌번호
+                            </th>
+                            <td>
+                                <code class="bg-light px-2 py-1 rounded">{{ account.masked_account_number }}</code>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                <i class="bi bi-calendar-plus me-2 text-primary"></i>생성일
+                            </th>
+                            <td>{{ account.created_at|date:"Y년 m월 d일 H:i" }}</td>
+                        </tr>
+                        <tr>
+                            <th>
+                                <i class="bi bi-calendar-check me-2 text-primary"></i>최근 수정일
+                            </th>
+                            <td>{{ account.updated_at|date:"Y년 m월 d일 H:i" }}</td>
+                        </tr>
+                    </tbody>
                 </table>
+            </div>
 
-                <div class="d-flex gap-2">
-                    <a href="{% url 'accounts:account_update' account.pk %}" class="btn btn-primary">수정</a>
-                    <a href="{% url 'accounts:account_list' %}" class="btn btn-secondary">목록</a>
-                    <form method="post" action="{% url 'accounts:account_delete' account.pk %}" class="inline-form">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-danger" onclick="return confirm('정말 삭제하시겠습니까?')">삭제</button>
-                    </form>
+            <!-- 액션 버튼 -->
+            <div class="card-footer bg-white border-top p-4">
+                <div class="action-buttons d-flex flex-wrap gap-2">
+                    <a href="{% url 'accounts:account_update' account.pk %}" class="btn btn-primary">
+                        <i class="bi bi-pencil me-2"></i>정보 수정
+                    </a>
+                    <a href="{% url 'accounts:account_list' %}" class="btn btn-outline-secondary">
+                        <i class="bi bi-list-ul me-2"></i>목록으로
+                    </a>
+                    <a href="{% url 'accounts:account_delete' account.pk %}" class="btn btn-outline-danger ms-auto">
+                        <i class="bi bi-trash me-2"></i>계좌 삭제
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 사이드바: 통계 요약 -->
+    <div class="col-lg-4">
+        <!-- 빠른 액션 -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white border-bottom py-3">
+                <h5 class="mb-0 fw-bold">
+                    <i class="bi bi-lightning me-2 text-warning"></i>빠른 액션
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{% url 'transactions:transaction_create' %}?account={{ account.pk }}&type=IN" class="btn btn-success">
+                        <i class="bi bi-plus-circle me-2"></i>수입 추가
+                    </a>
+                    <a href="{% url 'transactions:transaction_create' %}?account={{ account.pk }}&type=OUT" class="btn btn-danger">
+                        <i class="bi bi-dash-circle me-2"></i>지출 추가
+                    </a>
+                    <a href="{% url 'transactions:transaction_list' %}?account={{ account.pk }}" class="btn btn-outline-primary">
+                        <i class="bi bi-list-ul me-2"></i>이 계좌 거래내역 보기
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 계좌 상태 -->
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white border-bottom py-3">
+                <h5 class="mb-0 fw-bold">
+                    <i class="bi bi-info-circle me-2 text-primary"></i>계좌 상태
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="stat-mini mb-3">
+                    <div class="stat-value {% if account.balance >= 0 %}text-success{% else %}text-danger{% endif %}">
+                        {% if account.balance >= 0 %}+{% endif %}{{ account.balance|floatformat:0|intcomma }}원
+                    </div>
+                    <small class="text-muted">현재 잔액</small>
+                </div>
+                <div class="text-center">
+                    <span class="badge {% if account.balance >= 0 %}bg-success{% else %}bg-danger{% endif %} bg-opacity-10 {% if account.balance >= 0 %}text-success{% else %}text-danger{% endif %} px-3 py-2">
+                        <i class="bi bi-{% if account.balance >= 0 %}check-circle{% else %}exclamation-triangle{% endif %} me-1"></i>
+                        {% if account.balance >= 0 %}정상{% else %}마이너스{% endif %}
+                    </span>
                 </div>
             </div>
         </div>
