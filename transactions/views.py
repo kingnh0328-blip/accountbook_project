@@ -40,9 +40,10 @@ class TransactionListView(LoginRequiredMixin, ListView):
         거래 조회 + 필터링
         - request.GET으로 전달된 필터 조건 적용
         """
-        # 기본: 본인 거래만 + 관련 데이터 미리 로딩 (성능 최적화)
+        # 기본: 본인 거래만 + 활성 계좌만 + 관련 데이터 미리 로딩 (성능 최적화)
         queryset = Transaction.objects.filter(
-            user=self.request.user
+            user=self.request.user,
+            account__is_active=True
         ).select_related('account', 'category')
         
         # 1. 계좌 필터 (?account=1)
