@@ -205,26 +205,14 @@ class AccountUpdateView(LoginRequiredMixin, UpdateView):
 class AccountDeleteView(LoginRequiredMixin, DeleteView):
     """
     계좌 삭제 뷰
-    - POST: 계좌 비활성화 (실제 삭제 대신)
+    - POST: 계좌 실제 삭제 (연결된 거래내역도 CASCADE로 함께 삭제)
     """
     model = Account
     success_url = reverse_lazy('accounts:account_list')
-    
+
     def get_queryset(self):
         """본인 계좌만 삭제 가능"""
         return Account.objects.filter(user=self.request.user)
-    
-    def form_valid(self, form):
-        """
-        실제로는 삭제하지 않고 비활성화
-        - 데이터 보존을 위해
-        """
-        self.object = self.get_object()
-        self.object.is_active = False  # 비활성화
-        self.object.save()
-        return redirect(self.success_url)
-    
-    # 예: POST /accounts/1/delete/ → 1번 계좌 비활성화
 
 
 # ============================================
