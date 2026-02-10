@@ -1,5 +1,6 @@
 from pathlib import Path
 import os
+import dj_database_url
 BASE_DIR = Path(__file__).resolve().parent.parent
 from dotenv import load_dotenv
 load_dotenv()
@@ -70,6 +71,18 @@ DATABASES = {
 "PORT": os.getenv("DB_PORT"),
     }
 }
+
+# Fly.io의 DATABASE_URL 환경변수를 자동으로 읽어온다냐!
+# DATABASES = {
+#     'default': dj_database_url.config(
+#         default=os.environ.get('DATABASE_URL'),
+#         conn_max_age=600,
+#         ssl_require=True
+#     )
+# }
+
+
+
 
 
 AUTH_PASSWORD_VALIDATORS = [

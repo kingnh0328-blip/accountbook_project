@@ -11,6 +11,9 @@ from django.db.models import Q  # OR 조건 검색용
 from django.shortcuts import get_object_or_404, redirect
 from django.views import View
 from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+from django.contrib.auth.decorators import login_required
+import json
 
 from .models import Transaction, Attachment, Category
 from accounts.models import Account
@@ -295,6 +298,46 @@ class CategoryByTypeView(LoginRequiredMixin, View):
             for c in category_qs.order_by('name')
         ]
         return JsonResponse({'categories': categories})
+
+
+@login_required
+@require_POST
+def category_create_ajax(request):
+    """
+    AJAX용 카테고리 생성 API
+    - 모달에서 카테고리 추가 시 사용
+    - JSON 응답 반환
+    """
+    try:
+        data = json.loads(request.body)
+        name = data.get('name', '').strip()
+        category_type = data.get('type', 'BOTH')
+
+        if not name:
+            return JsonResponse({'success': False, 'error': '카테고리명을 입력해주세요.'}, status=400)
+
+        if category_type not in ['IN', 'OUT', 'BOTH']:
+            return JsonResponse({'success': False, 'error': '잘못된 타입입니다.'}, status=400)
+
+        if Category.objects.filter(user=request.user, name=name).exists():
+            return JsonResponse({'success': False, 'error': '이미 같은 이름의 카테고리가 있습니다.'}, status=400)
+
+        category = Category.objects.create(
+            user=request.user,
+            name=name,
+            type=category_type
+        )
+
+        return JsonResponse({
+            'success': True,
+            'category': {
+                'id': category.id,
+                'name': str(category),
+                'type': category.type,
+            }
+        })
+    except json.JSONDecodeError:
+        return JsonResponse({'success': False, 'error': '잘못된 요청입니다.'}, status=400)
 
 
 class CategoryCreateView(LoginRequiredMixin, CreateView):
