@@ -1,0 +1,223 @@
+/* ==============================================
+   대시보드 페이지 전용 스타일
+   파일: static/css/dashboard.css
+   ============================================== */
+
+/* 컨테이너 */
+.dashboard-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+/* ==============================================
+   통계 카드
+   ============================================== */
+.stat-card {
+    background: white;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e9ecef;
+    transition: all 0.2s;
+}
+
+.stat-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+/* 카드 타입별 좌측 테두리 색상 */
+.stat-card.income {
+    border-left: 4px solid #28a745;
+}
+
+.stat-card.expense {
+    border-left: 4px solid #dc3545;
+}
+
+.stat-card.balance {
+    border-left: 4px solid #137fec;
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    color: #6c757d;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #0d141b;
+    margin-bottom: 0.25rem;
+}
+
+.stat-value.positive {
+    color: #28a745;
+}
+
+.stat-value.negative {
+    color: #dc3545;
+}
+
+.stat-change {
+    font-size: 0.75rem;
+    color: #6c757d;
+}
+
+/* ==============================================
+   월 선택기
+   ============================================== */
+.month-selector {
+    background: white;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e9ecef;
+    margin-bottom: 2rem;
+}
+
+.month-selector label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.month-selector input[type="month"] {
+    border-radius: 0.5rem;
+    border: 1px solid #dee2e6;
+    padding: 0.5rem 1rem;
+    font-weight: 600;
+}
+
+/* ==============================================
+   카테고리 카드
+   ============================================== */
+.category-card {
+    background: white;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e9ecef;
+}
+
+.category-card h5 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #0d141b;
+    margin-bottom: 1.5rem;
+}
+
+.category-item {
+    padding: 1rem 0;
+    border-bottom: 1px solid #f8f9fa;
+}
+
+.category-item:last-child {
+    border-bottom: none;
+}
+
+.category-name {
+    font-weight: 600;
+    color: #0d141b;
+}
+
+.category-amount {
+    font-weight: 700;
+    color: #137fec;
+}
+
+.category-count {
+    font-size: 0.875rem;
+    color: #6c757d;
+}
+
+/* ==============================================
+   프로그레스 바
+   ============================================== */
+.progress {
+    height: 8px;
+    border-radius: 4px;
+    background-color: #e9ecef;
+}
+
+.progress-bar {
+    background: linear-gradient(90deg, #137fec 0%, #4facfe 100%);
+    border-radius: 4px;
+}
+
+/* ==============================================
+   빠른 액션 버튼
+   ============================================== */
+.quick-action {
+    background: white;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e9ecef;
+    text-align: center;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: block;
+}
+
+.quick-action:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+    text-decoration: none;
+}
+
+.quick-action i {
+    font-size: 2rem;
+    color: #137fec;
+    margin-bottom: 0.5rem;
+}
+
+.quick-action h5 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #0d141b;
+    margin-bottom: 0.25rem;
+}
+
+.quick-action p {
+    font-size: 0.875rem;
+    color: #6c757d;
+    margin: 0;
+}
+
+/* ==============================================
+   빈 상태 (거래 없음)
+   ============================================== */
+.empty-state {
+    background: rgba(19, 127, 236, 0.05);
+    border: 2px dashed #137fec;
+    border-radius: 1rem;
+    padding: 3rem 2rem;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.empty-state i {
+    font-size: 4rem;
+    color: #137fec;
+    margin-bottom: 1rem;
+}
+
+.empty-state h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #0d141b;
+    margin-bottom: 0.5rem;
+}
+
+.empty-state p {
+    color: #6c757d;
+    margin-bottom: 1.5rem;
+}

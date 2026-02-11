@@ -1,45 +1,146 @@
 <!-- accounts/templates/accounts/login.html -->
 {% extends 'base.html' %}
 
-{% block title %}로그인 - AccountBook{% endblock %}
+{% block title %}로그인 - 33FinanceƐƐ{% endblock %}
+
+{% block extra_css %}
+<style>
+    .login-card {
+        border: none;
+        border-radius: 16px;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    }
+    .login-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    .login-header .logo {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+    .login-header h2 {
+        font-weight: 700;
+        color: #111;
+    }
+    .login-header p {
+        color: #6c757d;
+    }
+    .form-control {
+        width: 100%;
+        min-width: 100px;
+        padding: 0.75rem 5rem 0.75rem 5rem;
+        border-radius: 8px;
+        border: 1px solid #dee2e6;
+        box-sizing: border-box;
+    }
+    .form-control:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
+    }
+    .input-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #6c757d;
+    }
+    .btn-login {
+        padding: 0.75rem;
+        font-weight: 600;
+        border-radius: 8px;
+    }
+    .divider {
+        display: flex;
+        align-items: center;
+        margin: 1.5rem 0;
+    }
+    .divider::before,
+    .divider::after {
+        content: '';
+        flex: 1;
+        border-bottom: 1px solid #dee2e6;
+    }
+    .divider span {
+        padding: 0 1rem;
+        color: #6c757d;
+        font-size: 0.875rem;
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-body">
-                <h2 class="card-title text-center mb-4">로그인</h2>
-                
+<div class="row justify-content-center align-items-center" style="min-height: 70vh;">
+    <div class="col-md-5 col-lg-4">
+        <div class="card login-card">
+            <div class="card-body p-4 p-md-5">
+                <!-- 헤더 -->
+                <div class="login-header">
+                    <div class="logo">💰</div>
+                    <h2>로그인</h2>
+                    <p>계정에 로그인하세요</p>
+                </div>
+
+                <!-- 로그인 폼 -->
                 <form method="post">
                     {% csrf_token %}
-                    
+
+                    <!-- 사용자명 입력 -->
                     <div class="mb-3">
-                        <label for="{{ form.username.id_for_label }}" class="form-label">사용자명</label>
-                        {{ form.username }}
+                        <label for="{{ form.username.id_for_label }}" class="form-label fw-semibold">아이디</label>
+                        <div class="position-relative w-100">
+
+                            {{ form.username }}
+                        </div>
                         {% if form.username.errors %}
-                            <div class="text-danger">{{ form.username.errors }}</div>
+                            <div class="text-danger small mt-1">{{ form.username.errors }}</div>
                         {% endif %}
                     </div>
-                    
-                    <div class="mb-3">
-                        <label for="{{ form.password.id_for_label }}" class="form-label">비밀번호</label>
-                        {{ form.password }}
+
+                    <!-- 비밀번호 입력 -->
+                    <div class="mb-4">
+                        <label for="{{ form.password.id_for_label }}" class="form-label fw-semibold">비밀번호</label>
+                        <div class="position-relative w-100">
+
+                            {{ form.password }}
+                        </div>
                         {% if form.password.errors %}
-                            <div class="text-danger">{{ form.password.errors }}</div>
+                            <div class="text-danger small mt-1">{{ form.password.errors }}</div>
                         {% endif %}
                     </div>
-                    
+
+                    <!-- 에러 메시지 -->
                     {% if form.non_field_errors %}
-                        <div class="alert alert-danger">
+                        <div class="alert alert-danger py-2 small">
+                            <i class="bi bi-exclamation-circle me-1"></i>
                             {{ form.non_field_errors }}
                         </div>
                     {% endif %}
-                    
-                    <button type="submit" class="btn btn-primary w-100">로그인</button>
+
+                    <!-- 로그인 버튼 -->
+                    <button type="submit" class="btn btn-primary btn-login w-100">
+                        로그인
+                        <i class="bi bi-arrow-right ms-1"></i>
+                    </button>
                 </form>
-                
-                <div class="text-center mt-3">
-                    <a href="{% url 'accounts:signup' %}">계정이 없으신가요? 회원가입</a>
+
+                <style>
+                /* 로그인 폼 필드 너비를 100%로 맞추기 */
+                    #id_username,
+                    #id_password {
+                        width: 100% !important;
+                    }
+                </style>
+
+                <!-- 회원가입 링크 -->
+                <div class="divider">
+                    <span>또는</span>
+                </div>
+
+                <div class="text-center">
+                    <p class="text-muted mb-0">
+                        계정이 없으신가요?
+                        <a href="{% url 'accounts:signup' %}" class="text-primary fw-semibold text-decoration-none">회원가입</a>
+                    </p>
                 </div>
             </div>
         </div>

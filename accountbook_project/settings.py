@@ -2,7 +2,6 @@ from pathlib import Path
 import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 from dotenv import load_dotenv
-
 load_dotenv()
 
 
@@ -27,6 +26,7 @@ INSTALLED_APPS = [
     'accounts',
     'transactions',
     'dashboard',
+    'report',
 ]
 
 MIDDLEWARE = [

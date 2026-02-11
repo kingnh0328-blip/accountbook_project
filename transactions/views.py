@@ -10,6 +10,7 @@ from django.urls import reverse_lazy
 from django.db.models import Q  # OR 조건 검색용
 from django.shortcuts import get_object_or_404, redirect
 from django.views import View
+from django.http import JsonResponse
 
 from .models import Transaction, Attachment, Category
 from accounts.models import Account
@@ -63,7 +64,15 @@ class TransactionListView(LoginRequiredMixin, ListView):
         
         end_date = self.request.GET.get('end_date')
         if end_date:
-            queryset = queryset.filter(occurred_at__lte=end_date)
+            from datetime import timedelta
+            from django.utils.dateparse import parse_date
+            from django.utils import timezone as tz
+            parsed = parse_date(end_date)
+            if parsed:
+                end_dt = tz.make_aware(
+                    tz.datetime(parsed.year, parsed.month, parsed.day)
+                ) + timedelta(days=1)
+                queryset = queryset.filter(occurred_at__lt=end_dt)
         
         # 5. 키워드 검색 (?q=카페)
         # 메모 또는 가맹점에서 검색
@@ -76,6 +85,11 @@ class TransactionListView(LoginRequiredMixin, ListView):
             # Q(...) | Q(...): OR 조건
         
         return queryset
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['accounts'] = Account.objects.filter(user=self.request.user, is_active=True)
+        return context
     
     # 예: GET /transactions/ → 전체 거래 목록
     #     GET /transactions/?account=1 → 1번 계좌 거래만
@@ -104,9 +118,25 @@ class TransactionCreateView(LoginRequiredMixin, CreateView):
         return kwargs
     
     def form_valid(self, form):
-        """자동으로 현재 사용자 설정"""
+        """자동으로 현재 사용자 설정 및 영수증 업로드 처리"""
         form.instance.user = self.request.user
-        return super().form_valid(form)
+        response = super().form_valid(form)
+
+        # 영수증 파일이 업로드된 경우 처리
+        receipt_file = self.request.FILES.get('receipt_file')
+        if receipt_file:
+            # Attachment 객체 생성
+            attachment = Attachment(
+                user=self.request.user,
+                transaction=self.object,
+                file=receipt_file,
+                original_name=receipt_file.name,
+                size=receipt_file.size,
+                content_type=receipt_file.content_type
+            )
+            attachment.save()
+
+        return response
     
     # 예: GET /transactions/create/ → 거래 생성 폼
     #     POST /transactions/create/ → 거래 생성
@@ -138,14 +168,20 @@ class TransactionUpdateView(LoginRequiredMixin, UpdateView):
     model = Transaction
     form_class = TransactionForm
     template_name = 'transactions/transaction_form.html'
-    
+
     def get_queryset(self):
         """본인 거래만 수정 가능"""
         return Transaction.objects.filter(user=self.request.user)
-    
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        kwargs['tx_type'] = self.object.tx_type
+        return kwargs
+
     def get_success_url(self):
         """수정 후 해당 거래 상세 페이지로"""
-        return reverse_lazy('transactions:transaction_detail', 
+        return reverse_lazy('transactions:transaction_detail',
                           kwargs={'pk': self.object.pk})
 
 
@@ -237,20 +273,39 @@ class AttachmentDeleteView(LoginRequiredMixin, View):
     
     # 예: POST /attachment/5/delete/ → 5번 영수증 삭제
 
+class CategoryByTypeView(LoginRequiredMixin, View):
+    """
+    카테고리 목록을 거래 타입별로 필터링하여 JSON으로 반환
+    - GET /transactions/api/categories/?tx_type=IN
+    - GET /transactions/api/categories/?tx_type=OUT
+    """
+    def get(self, request):
+        tx_type = request.GET.get('tx_type')
+        category_qs = Category.objects.filter(
+            Q(user=request.user) | Q(user__isnull=True)
+        )
+
+        if tx_type == 'IN':
+            category_qs = category_qs.filter(Q(type='IN') | Q(type='BOTH'))
+        elif tx_type == 'OUT':
+            category_qs = category_qs.filter(Q(type='OUT') | Q(type='BOTH'))
+
+        categories = [
+            {'id': c.id, 'name': str(c)}
+            for c in category_qs.order_by('name')
+        ]
+        return JsonResponse({'categories': categories})
+
+
 class CategoryCreateView(LoginRequiredMixin, CreateView):
     model = Category
     form_class = CategoryForm
     template_name = 'transactions/category_form.html'
-    success_url = reverse_lazy('transactions:transaction_create') # 생성 후 거래 입력창으로!
+    success_url = reverse_lazy('transactions:category_list')
 
     def form_valid(self, form):
-        form.instance.user = self.request.user # 현재 로그인한 유저로 자동 저장한다냐!
+        form.instance.user = self.request.user
         return super().form_valid(form)
-    def get_success_url(self):
-        from_type = self.request.GET.get('from_type')
-        if from_type:
-            return reverse_lazy('transactions:transaction_create') + f'?type={from_type}'
-        return reverse_lazy('transactions:transaction_create')
 
 class CategoryListView(LoginRequiredMixin, ListView):
     model = Category
@@ -264,11 +319,56 @@ class CategoryListView(LoginRequiredMixin, ListView):
 class CategoryDeleteView(LoginRequiredMixin, DeleteView):
     model = Category
     # 삭제가 끝나면 카테고리 관리 페이지나 거래 목록으로 돌려보낸다냐!
-    success_url = reverse_lazy('transactions:transaction_list') 
-    
+    success_url = reverse_lazy('transactions:transaction_list')
+
     # 💡 보안상 본인 카테고리만 삭제할 수 있게 쿼리셋을 제한하자냐!
     def get_queryset(self):
         return Category.objects.filter(user=self.request.user)
+
+
+@login_required
+@require_POST
+def category_create_ajax(request):
+    """
+    AJAX용 카테고리 생성 API
+    - 모달에서 카테고리 추가 시 사용
+    - JSON 응답 반환
+    """
+    try:
+        data = json.loads(request.body)
+        name = data.get('name', '').strip()
+        category_type = data.get('type', 'BOTH')
+
+        # 유효성 검사
+        if not name:
+            return JsonResponse({'success': False, 'error': '카테고리명을 입력해주세요.'}, status=400)
+
+        if category_type not in ['IN', 'OUT', 'BOTH']:
+            return JsonResponse({'success': False, 'error': '잘못된 타입입니다.'}, status=400)
+
+        # 중복 검사 (같은 사용자의 같은 이름 카테고리)
+        if Category.objects.filter(user=request.user, name=name).exists():
+            return JsonResponse({'success': False, 'error': '이미 같은 이름의 카테고리가 있습니다.'}, status=400)
+
+        # 카테고리 생성
+        category = Category.objects.create(
+            user=request.user,
+            name=name,
+            type=category_type
+        )
+
+        return JsonResponse({
+            'success': True,
+            'category': {
+                'id': category.id,
+                'name': category.name,
+                'type': category.type,
+                'display': str(category)  # "식비 (지출)" 형식
+            }
+        })
+
+    except json.JSONDecodeError:
+        return JsonResponse({'success': False, 'error': '잘못된 요청입니다.'}, status=400)
 
 # ============================================
 # URL 패턴과의 연결 예시

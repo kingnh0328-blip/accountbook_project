@@ -1,177 +1,258 @@
+<!-- transactions/templates/transactions/transaction_detail.html -->
 {% extends 'base.html' %}
+{% load humanize %}
+{% load static %}
 
-{% block title %}거래 상세 - AccountBook{% endblock %}
+{% block title %}거래 상세 - 33FinanceƐƐ{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'transactions/css/transaction_detail.css' %}">
+<style>
+    .detail-card {
+        border: none;
+        border-radius: 16px;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+        overflow: hidden;
+    }
+    .detail-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid #e9ecef;
+    }
+    .amount-display {
+        font-size: 2.25rem;
+        font-weight: 700;
+    }
+    .info-table th {
+        width: 35%;
+        background-color: #f8f9fa;
+        font-weight: 600;
+        color: #495057;
+        border: none;
+        padding: 1rem 1.25rem;
+    }
+    .info-table td {
+        border: none;
+        padding: 1rem 1.25rem;
+    }
+    .info-table tr {
+        border-bottom: 1px solid #e9ecef;
+    }
+    .info-table tr:last-child {
+        border-bottom: none;
+    }
+    .receipt-card {
+        border: none;
+        border-radius: 16px;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    }
+    .receipt-preview {
+        max-height: 300px;
+        object-fit: contain;
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
+    .receipt-preview:hover {
+        transform: scale(1.02);
+    }
+    .empty-receipt {
+        border: 2px dashed #dee2e6;
+        border-radius: 12px;
+        padding: 2rem;
+        text-align: center;
+    }
+    .type-badge {
+        font-size: 0.875rem;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+    }
+    .action-btn {
+        padding: 0.625rem 1.25rem;
+        border-radius: 8px;
+        font-weight: 600;
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <div class="row">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h4 class="mb-0">거래 상세</h4>
+<!-- 뒤로가기 -->
+<div class="mb-4">
+    <a href="{% url 'transactions:transaction_list' %}" class="text-decoration-none text-muted">
+        <i class="bi bi-arrow-left me-1"></i>거래 목록으로 돌아가기
+    </a>
+</div>
+
+<div class="row g-4">
+    <!-- 메인: 거래 정보 -->
+    <div class="col-lg-8">
+        <div class="card detail-card">
+            <!-- 헤더 -->
+            <div class="detail-header">
+                <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
                     <div>
-                        <a href="{% url 'transactions:transaction_update' transaction.pk %}" 
-                           class="btn btn-sm btn-warning">
-                            <i class="bi bi-pencil"></i> 수정
-                        </a>
-                        <a href="{% url 'transactions:transaction_delete' transaction.pk %}" 
-                           class="btn btn-sm btn-danger"
-                           onclick="return confirm('정말 삭제하시겠습니까?')">
-                            <i class="bi bi-trash"></i> 삭제
-                        </a>
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <span class="badge type-badge {% if transaction.tx_type == 'IN' %}bg-success bg-opacity-10 text-success{% else %}bg-danger bg-opacity-10 text-danger{% endif %}">
+                                <i class="bi bi-{% if transaction.tx_type == 'IN' %}arrow-down-circle{% else %}arrow-up-circle{% endif %} me-1"></i>
+                                {{ transaction.get_tx_type_display }}
+                            </span>
+                            <span class="badge bg-secondary bg-opacity-10 text-secondary">
+                                {{ transaction.category.name|default:"미분류" }}
+                            </span>
+                        </div>
+                        <div class="amount-display {% if transaction.tx_type == 'IN' %}text-success{% else %}text-danger{% endif %}">
+                            {% if transaction.tx_type == 'IN' %}+{% else %}-{% endif %}{{ transaction.amount|floatformat:0|intcomma }}원
+                        </div>
                     </div>
-                </div>
-                
-                <div class="card-body">
-                    <!-- 거래 정보 -->
-                    <table class="table">
-                        <tbody>
-                            <tr>
-                                <th style="width: 30%;">거래일시</th>
-                                <td>{{ transaction.occurred_at|date:"Y-m-d H:i" }}</td>
-                            </tr>
-                            <tr>
-                                <th>계좌</th>
-                                <td>{{ transaction.account.name }}</td>
-                            </tr>
-                            <tr>
-                                <th>거래 유형</th>
-                                <td>
-                                    <span class="badge {% if transaction.tx_type == 'IN' %}bg-success{% else %}bg-danger{% endif %}">
-                                        {{ transaction.get_tx_type_display }}
-                                    </span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>금액</th>
-                                <td>
-                                    <strong style="color: {% if transaction.tx_type == 'IN' %}#28a745{% else %}#dc3545{% endif %}; font-size: 1.2em;">
-                                        {% if transaction.tx_type == 'IN' %}+{% else %}-{% endif %}
-                                        {{ transaction.amount|floatformat:0 }}원
-                                    </strong>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>카테고리</th>
-                                <td>{{ transaction.category.name|default:"-" }}</td>
-                            </tr>
-                            <tr>
-                                <th>가맹점/거래처</th>
-                                <td>{{ transaction.merchant|default:"-" }}</td>
-                            </tr>
-                            <tr>
-                                <th>메모</th>
-                                <td>{{ transaction.memo|default:"-"|linebreaks }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    
-                    <!-- 하단 버튼 -->
-                    <div class="mt-3">
-                        <a href="{% url 'transactions:transaction_list' %}" class="btn btn-secondary">
-                            <i class="bi bi-list"></i> 목록으로
+                    <div class="d-flex gap-2">
+                        <a href="{% url 'transactions:transaction_update' transaction.pk %}" class="btn btn-outline-primary action-btn">
+                            <i class="bi bi-pencil me-1"></i>수정
+                        </a>
+                        <a href="{% url 'transactions:transaction_delete' transaction.pk %}" class="btn btn-outline-danger action-btn">
+                            <i class="bi bi-trash me-1"></i>삭제
                         </a>
                     </div>
                 </div>
             </div>
+
+            <!-- 상세 정보 -->
+            <div class="card-body p-0">
+                <table class="table info-table mb-0">
+                    <tbody>
+                        <tr>
+                            <th>
+                                <i class="bi bi-calendar3 me-2 text-primary"></i>거래일시
+                            </th>
+                            <td>{{ transaction.occurred_at|date:"Y년 m월 d일 H:i" }}</td>
+                        </tr>
+                        <tr>
+                            <th>
+                                <i class="bi bi-bank me-2 text-primary"></i>계좌
+                            </th>
+                            <td>
+                                <a href="{% url 'accounts:account_detail' transaction.account.pk %}" class="text-decoration-none">
+                                    {{ transaction.account.name }}
+                                    <i class="bi bi-box-arrow-up-right ms-1 small"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                <i class="bi bi-tag me-2 text-primary"></i>카테고리
+                            </th>
+                            <td>{{ transaction.category.name|default:"-" }}</td>
+                        </tr>
+                        <tr>
+                            <th>
+                                <i class="bi bi-shop me-2 text-primary"></i>가맹점/거래처
+                            </th>
+                            <td>{{ transaction.merchant|default:"-" }}</td>
+                        </tr>
+                        <tr>
+                            <th>
+                                <i class="bi bi-chat-left-text me-2 text-primary"></i>메모
+                            </th>
+                            <td>
+                                {% if transaction.memo %}
+                                    <div class="bg-light rounded p-3">
+                                        {{ transaction.memo|linebreaks }}
+                                    </div>
+                                {% else %}
+                                    <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 하단 버튼 -->
+            <div class="card-footer bg-white border-top p-4">
+                <a href="{% url 'transactions:transaction_list' %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-list-ul me-2"></i>목록으로
+                </a>
+            </div>
         </div>
-        
-        <!-- 영수증 영역 -->
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">
-                        <i class="bi bi-receipt"></i> 영수증
-                    </h5>
-                    {% if not transaction.attachment %}
-                        <a href="{% url 'transactions:attachment_upload' transaction.pk %}" 
-                           class="btn btn-sm btn-primary">
-                            <i class="bi bi-upload"></i> 업로드
-                        </a>
-                    {% endif %}
+    </div>
+
+    <!-- 사이드: 영수증 -->
+    <div class="col-lg-4">
+        <div class="card receipt-card">
+            <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 fw-bold">
+                    <i class="bi bi-receipt me-2 text-primary"></i>영수증
+                </h5>
+                {% if not transaction.attachment %}
+                <a href="{% url 'transactions:attachment_upload' transaction.pk %}" class="btn btn-sm btn-primary">
+                    <i class="bi bi-upload me-1"></i>업로드
+                </a>
+                {% endif %}
+            </div>
+
+            <div class="card-body">
+                {% if transaction.attachment %}
+                <!-- 영수증 있음 -->
+                <div class="mb-3">
+                    <p class="mb-2 small">
+                        <i class="bi bi-file-earmark me-1 text-muted"></i>
+                        <strong>파일명:</strong><br>
+                        <span class="text-muted">{{ transaction.attachment.original_name }}</span>
+                    </p>
+                    <p class="mb-2 small">
+                        <i class="bi bi-hdd me-1 text-muted"></i>
+                        <strong>크기:</strong>
+                        <span class="text-muted">{{ transaction.attachment.size|filesizeformat }}</span>
+                    </p>
+                    <p class="mb-0 small">
+                        <i class="bi bi-clock me-1 text-muted"></i>
+                        <strong>업로드:</strong>
+                        <span class="text-muted">{{ transaction.attachment.uploaded_at|date:"Y-m-d H:i" }}</span>
+                    </p>
                 </div>
-                
-                <div class="card-body">
-                    {% if transaction.attachment %}
-                        <!-- 영수증이 있는 경우 -->
-                        <div class="mb-3">
-                            <p class="mb-2">
-                                <strong>파일명:</strong><br>
-                                <small class="text-muted">{{ transaction.attachment.original_name }}</small>
-                            </p>
-                            <p class="mb-2">
-                                <strong>크기:</strong> 
-                                <small>{{ transaction.attachment.size|filesizeformat }}</small>
-                            </p>
-                            <p class="mb-2">
-                                <strong>업로드 일시:</strong><br>
-                                <small>{{ transaction.attachment.uploaded_at|date:"Y-m-d H:i" }}</small>
-                            </p>
-                        </div>
-                        
-                        <!-- 이미지 미리보기 -->
-                        {% if transaction.attachment.content_type|slice:":5" == "image" %}
-                            <div class="mb-3">
-                                <img src="{{ transaction.attachment.file.url }}" 
-                                     class="img-fluid rounded border" 
-                                     alt="영수증"
-                                     style="cursor: pointer;"
-                                     onclick="window.open('{{ transaction.attachment.file.url }}', '_blank')">
-                                <small class="text-muted d-block mt-2">
-                                    클릭하면 크게 볼 수 있습니다
-                                </small>
-                            </div>
-                        {% elif transaction.attachment.content_type == "application/pdf" %}
-                            <!-- PDF 파일인 경우 -->
-                            <div class="alert alert-info">
-                                <i class="bi bi-file-pdf"></i> PDF 파일
-                            </div>
-                        {% endif %}
-                        
-                        <!-- 영수증 액션 버튼 -->
-                        <div class="d-flex gap-2">
-                            <a href="{{ transaction.attachment.file.url }}" 
-                               class="btn btn-sm btn-success flex-fill"
-                               download>
-                                <i class="bi bi-download"></i> 다운로드
-                            </a>
-                            <form method="post" 
-                                  action="{% url 'transactions:attachment_delete' transaction.attachment.pk %}"
-                                  class="flex-fill"
-                                  onsubmit="return confirm('영수증을 삭제하시겠습니까?')">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-sm btn-danger w-100">
-                                    <i class="bi bi-trash"></i> 삭제
-                                </button>
-                            </form>
-                        </div>
-                    {% else %}
-                        <!-- 영수증이 없는 경우 -->
-                        <div class="text-center py-4">
-                            <i class="bi bi-receipt" style="font-size: 3rem; color: #ccc;"></i>
-                            <p class="text-muted mt-2">업로드된 영수증이 없습니다</p>
-                            <a href="{% url 'transactions:attachment_upload' transaction.pk %}" 
-                               class="btn btn-primary">
-                                <i class="bi bi-upload"></i> 영수증 업로드
-                            </a>
-                        </div>
-                    {% endif %}
+
+                <!-- 이미지 미리보기 -->
+                {% if transaction.attachment.content_type|slice:":5" == "image" %}
+                <div class="mb-3 text-center">
+                    <img src="{{ transaction.attachment.file.url }}"
+                         class="img-fluid rounded border receipt-preview"
+                         alt="영수증"
+                         onclick="window.open('{{ transaction.attachment.file.url }}', '_blank')">
+                    <small class="text-muted d-block mt-2">
+                        <i class="bi bi-zoom-in me-1"></i>클릭하면 크게 볼 수 있습니다
+                    </small>
                 </div>
+                {% elif transaction.attachment.content_type == "application/pdf" %}
+                <div class="alert alert-info mb-3">
+                    <i class="bi bi-file-pdf me-2"></i>PDF 파일
+                </div>
+                {% endif %}
+
+                <!-- 영수증 버튼 -->
+                <div class="d-grid gap-2">
+                    <a href="{{ transaction.attachment.file.url }}"
+                       class="btn btn-success"
+                       download>
+                        <i class="bi bi-download me-2"></i>다운로드
+                    </a>
+                    <form method="post"
+                          action="{% url 'transactions:attachment_delete' transaction.attachment.pk %}"
+                          onsubmit="return confirm('영수증을 삭제하시겠습니까?')">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-danger w-100">
+                            <i class="bi bi-trash me-2"></i>삭제
+                        </button>
+                    </form>
+                </div>
+                {% else %}
+                <!-- 영수증 없음 -->
+                <div class="empty-receipt">
+                    <i class="bi bi-receipt text-muted" style="font-size: 3rem;"></i>
+                    <p class="text-muted mt-3 mb-3">업로드된 영수증이 없습니다</p>
+                    <a href="{% url 'transactions:attachment_upload' transaction.pk %}" class="btn btn-primary">
+                        <i class="bi bi-upload me-2"></i>영수증 업로드
+                    </a>
+                </div>
+                {% endif %}
             </div>
         </div>
     </div>
 </div>
-
-<!-- 이미지 확대 모달 (선택사항) -->
-<style>
-.card-header {
-    background-color: #f8f9fa;
-    border-bottom: 2px solid #dee2e6;
-}
-
-img.img-fluid:hover {
-    opacity: 0.8;
-    transition: opacity 0.3s;
-}
-</style>
 {% endblock %}

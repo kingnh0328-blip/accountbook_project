@@ -1,0 +1,200 @@
+/* ==============================================
+   계좌 목록 페이지 전용 스타일
+   파일: static/css/accounts.css
+   ============================================== */
+
+/* 컨테이너 */
+.accounts-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+/* 페이지 헤더 */
+.page-header {
+    margin-bottom: 2rem;
+}
+
+.page-header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #0d141b;
+    margin-bottom: 0.5rem;
+}
+
+.page-header p {
+    color: #6c757d;
+}
+
+/* ==============================================
+   계좌 카드 - 통장 디자인
+   ============================================== */
+.account-card {
+    background: white;
+    border-radius: 1.25rem;
+    padding: 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e9ecef;
+    overflow: hidden;
+    transition: all 0.3s;
+    position: relative;
+}
+
+.account-card:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    transform: translateY(-4px);
+}
+
+/* 통장 상단 (색상 구분) */
+.account-card-header {
+    background: linear-gradient(135deg, #137fec 0%, #4facfe 100%);
+    padding: 1.5rem;
+    position: relative;
+}
+
+.account-card-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: repeating-linear-gradient(
+        to right,
+        transparent,
+        transparent 4px,
+        rgba(255,255,255,0.3) 4px,
+        rgba(255,255,255,0.3) 8px
+    );
+}
+
+/* 계좌 타입별 색상 */
+.account-card-header.checking {
+    background: linear-gradient(135deg, #137fec 0%, #4facfe 100%);
+}
+
+.account-card-header.savings {
+    background: linear-gradient(135deg, #28a745 0%, #5fdd7a 100%);
+}
+
+.account-card-header.credit {
+    background: linear-gradient(135deg, #6f42c1 0%, #9d68e4 100%);
+}
+
+.bank-name {
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.account-name {
+    font-size: 1.25rem;
+    color: white;
+    font-weight: 700;
+}
+
+/* 통장 본문 */
+.account-card-body {
+    padding: 1.5rem;
+    background: white;
+}
+
+.account-number {
+    font-size: 0.875rem;
+    color: #6c757d;
+    margin-bottom: 1rem;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 0.05em;
+}
+
+.balance-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 1rem;
+}
+
+.balance-label {
+    font-size: 0.75rem;
+    color: #6c757d;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.balance-amount {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #0d141b;
+}
+
+.account-actions {
+    display: flex;
+    gap: 0.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid #f8f9fa;
+}
+
+.account-actions .btn {
+    flex: 1;
+    font-size: 0.875rem;
+    padding: 0.5rem;
+}
+
+/* ==============================================
+   빈 상태 (계좌 없음)
+   ============================================== */
+.empty-state {
+    background: rgba(19, 127, 236, 0.05);
+    border: 2px dashed #137fec;
+    border-radius: 1rem;
+    padding: 3rem 2rem;
+    text-align: center;
+}
+
+.empty-state i {
+    font-size: 4rem;
+    color: #137fec;
+    margin-bottom: 1rem;
+}
+
+.empty-state h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #0d141b;
+    margin-bottom: 0.5rem;
+}
+
+.empty-state p {
+    color: #6c757d;
+    margin-bottom: 1.5rem;
+}
+
+/* ==============================================
+   계좌 통계
+   ============================================== */
+.account-stats {
+    background: white;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e9ecef;
+    margin-bottom: 2rem;
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #137fec;
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    color: #6c757d;
+    font-weight: 600;
+}

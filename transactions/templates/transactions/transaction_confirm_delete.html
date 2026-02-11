@@ -1,0 +1,164 @@
+<!-- transactions/templates/transactions/transaction_confirm_delete.html -->
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block title %}거래 삭제 확인 - 33FinanceƐƐ{% endblock %}
+
+{% block extra_css %}
+<style>
+    .delete-card {
+        border: none;
+        border-radius: 16px;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.1);
+        overflow: hidden;
+    }
+    .delete-header {
+        background: linear-gradient(135deg, #dc3545, #c82333);
+        color: white;
+        padding: 2rem;
+        text-align: center;
+    }
+    .delete-icon {
+        width: 80px;
+        height: 80px;
+        background: rgba(255,255,255,0.2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+    }
+    .transaction-preview {
+        background: #f8f9fa;
+        border-radius: 12px;
+        padding: 1.5rem;
+    }
+    .preview-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #e9ecef;
+    }
+    .preview-item:last-child {
+        border-bottom: none;
+    }
+    .preview-item .label {
+        color: #6c757d;
+        font-weight: 500;
+    }
+    .preview-item .value {
+        font-weight: 600;
+    }
+    .amount-preview {
+        font-size: 1.5rem;
+        font-weight: 700;
+    }
+    .btn-delete {
+        padding: 0.875rem 2rem;
+        font-weight: 600;
+        border-radius: 8px;
+    }
+    .warning-text {
+        background: #fff3cd;
+        border-left: 4px solid #ffc107;
+        padding: 1rem;
+        border-radius: 0 8px 8px 0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center" style="min-height: 70vh;">
+    <div class="col-md-6 col-lg-5">
+        <div class="card delete-card">
+            <!-- 헤더 -->
+            <div class="delete-header">
+                <div class="delete-icon">
+                    <i class="bi bi-exclamation-triangle fs-2"></i>
+                </div>
+                <h3 class="fw-bold mb-1">거래 삭제</h3>
+                <p class="mb-0 opacity-75">이 작업은 되돌릴 수 없습니다</p>
+            </div>
+
+            <!-- 본문 -->
+            <div class="card-body p-4">
+                <p class="text-center mb-4">다음 거래를 정말 삭제하시겠습니까?</p>
+
+                <!-- 거래 미리보기 -->
+                <div class="transaction-preview mb-4">
+                    <div class="text-center mb-3">
+                        <span class="badge {% if object.tx_type == 'IN' %}bg-success{% else %}bg-danger{% endif %} mb-2">
+                            {{ object.get_tx_type_display }}
+                        </span>
+                        <div class="amount-preview {% if object.tx_type == 'IN' %}text-success{% else %}text-danger{% endif %}">
+                            {% if object.tx_type == 'IN' %}+{% else %}-{% endif %}{{ object.amount|floatformat:0|intcomma }}원
+                        </div>
+                    </div>
+
+                    <div class="preview-item">
+                        <span class="label">
+                            <i class="bi bi-calendar3 me-2"></i>날짜
+                        </span>
+                        <span class="value">{{ object.occurred_at|date:"Y-m-d" }}</span>
+                    </div>
+                    <div class="preview-item">
+                        <span class="label">
+                            <i class="bi bi-bank me-2"></i>계좌
+                        </span>
+                        <span class="value">{{ object.account.name }}</span>
+                    </div>
+                    {% if object.category %}
+                    <div class="preview-item">
+                        <span class="label">
+                            <i class="bi bi-tag me-2"></i>카테고리
+                        </span>
+                        <span class="value">{{ object.category.name }}</span>
+                    </div>
+                    {% endif %}
+                    {% if object.merchant %}
+                    <div class="preview-item">
+                        <span class="label">
+                            <i class="bi bi-shop me-2"></i>가맹점
+                        </span>
+                        <span class="value">{{ object.merchant }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- 경고 메시지 -->
+                <div class="warning-text mb-4">
+                    <div class="d-flex align-items-start">
+                        <i class="bi bi-info-circle text-warning me-2 mt-1"></i>
+                        <div class="small">
+                            <strong>참고:</strong> 거래를 삭제하면 계좌 잔액이 자동으로 조정됩니다.
+                            {% if object.attachment %}
+                            <br>첨부된 영수증도 함께 삭제됩니다.
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 버튼 -->
+                <div class="d-flex gap-3">
+                    <form method="post" class="flex-grow-1">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-delete w-100">
+                            <i class="bi bi-trash me-2"></i>삭제하기
+                        </button>
+                    </form>
+                    <a href="{% url 'transactions:transaction_detail' object.pk %}" class="btn btn-outline-secondary btn-delete">
+                        취소
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 도움말 -->
+        <div class="text-center mt-4">
+            <a href="{% url 'transactions:transaction_list' %}" class="text-muted text-decoration-none">
+                <i class="bi bi-arrow-left me-1"></i>거래 목록으로 돌아가기
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
