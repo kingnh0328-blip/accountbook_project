@@ -77,9 +77,10 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         # URL에서 계좌 ID 파라미터 추출
         account_id = self.request.GET.get('account')
 
-        # 선택된 월의 모든 거래 조회
+        # 선택된 월의 모든 거래 조회 (활성 계좌만)
         transactions = Transaction.objects.filter(
             user=self.request.user,
+            account__is_active=True,
             occurred_at__year=year,
             occurred_at__month=month
         )

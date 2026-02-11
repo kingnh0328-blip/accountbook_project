@@ -1,15 +1,14 @@
 from pathlib import Path
 import os
+# import dj_database_url  # 배포용 (Fly.io)
 BASE_DIR = Path(__file__).resolve().parent.parent
 from dotenv import load_dotenv
 load_dotenv()
 
 
 SECRET_KEY = os.getenv('SECRET_KEY')
-ALLOWED_HOSTS = []
-BASE_DIR = Path(__file__).resolve().parent.parent
-DEBUG = os.getenv('DEBUG', 'False') == 'True'
-
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+DEBUG = True
 
 
 INSTALLED_APPS = [
@@ -71,6 +70,18 @@ DATABASES = {
     }
 }
 
+# Fly.io의 DATABASE_URL 환경변수를 자동으로 읽어온다냐!
+# DATABASES = {
+#     'default': dj_database_url.config(
+#         default=os.environ.get('DATABASE_URL'),
+#         conn_max_age=600,
+#         ssl_require=True
+#     )
+# }
+
+
+
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -100,8 +111,6 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
@@ -117,3 +126,10 @@ MEDIA_ROOT = BASE_DIR / 'media'
 LOGIN_REDIRECT_URL = '/dashboard/'
 LOGOUT_REDIRECT_URL = '/login/'
 LOGIN_URL = '/login/'
+
+# ALLOWED_HOSTS = ["accountbook-project.fly.dev", "localhost", "127.0.0.1"]
+
+# CSRF_TRUSTED_ORIGINS = ["https://accountbook-project.fly.dev", "https://*.fly.dev"]
+
+# STATIC_ROOT = BASE_DIR / 'staticfiles'
+# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
