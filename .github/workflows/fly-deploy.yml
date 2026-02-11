@@ -1,10 +1,12 @@
 # See https://fly.io/docs/app-guides/continuous-deployment-with-github-actions/
 
 name: Fly Deploy
-on:
-  push:
-    branches:
-      - main
+# 배포 비활성화 (로컬 발표용) - 다시 배포할 때 아래 주석 해제
+# on:
+#   push:
+#     branches:
+#       - main
+on: workflow_dispatch  # 수동 실행만 가능
 jobs:
   deploy:
     name: Deploy app
