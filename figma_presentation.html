@@ -1,0 +1,2086 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal AccountBook - 기술문서 프레젠테이션</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+        :root {
+            --primary: #0d6efd;
+            --primary-dark: #0a58ca;
+            --primary-light: #e7f1ff;
+            --success: #28a745;
+            --success-light: #d4edda;
+            --danger: #dc3545;
+            --danger-light: #f8d7da;
+            --warning: #ffc107;
+            --warning-light: #fff3cd;
+            --info: #17a2b8;
+            --info-light: #d1ecf1;
+            --dark: #1a1a2e;
+            --dark-secondary: #16213e;
+            --gray-50: #f8f9fa;
+            --gray-100: #f1f3f5;
+            --gray-200: #e9ecef;
+            --gray-300: #dee2e6;
+            --gray-400: #ced4da;
+            --gray-500: #adb5bd;
+            --gray-600: #6c757d;
+            --gray-700: #495057;
+            --gray-800: #343a40;
+            --gray-900: #212529;
+            --white: #ffffff;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
+            --shadow-lg: 0 8px 30px rgba(0,0,0,0.12);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--gray-100);
+            color: var(--gray-900);
+            line-height: 1.6;
+        }
+
+        /* ========== Slide System ========== */
+        .slide {
+            width: 1440px;
+            min-height: 900px;
+            margin: 40px auto;
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            position: relative;
+            page-break-after: always;
+        }
+
+        .slide-number {
+            position: absolute;
+            bottom: 24px;
+            right: 32px;
+            font-size: 13px;
+            color: var(--gray-400);
+            font-weight: 500;
+        }
+
+        /* ========== Page 1: Cover ========== */
+        .cover-slide {
+            display: flex;
+            min-height: 900px;
+        }
+
+        .cover-left {
+            flex: 1;
+            background: linear-gradient(135deg, var(--dark) 0%, var(--dark-secondary) 50%, var(--primary-dark) 100%);
+            color: var(--white);
+            padding: 80px 64px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cover-left::before {
+            content: '';
+            position: absolute;
+            top: -100px;
+            right: -100px;
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+            background: rgba(13, 110, 253, 0.1);
+        }
+
+        .cover-left::after {
+            content: '';
+            position: absolute;
+            bottom: -50px;
+            left: -50px;
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            background: rgba(40, 167, 69, 0.08);
+        }
+
+        .cover-badge {
+            display: inline-block;
+            background: rgba(13, 110, 253, 0.2);
+            border: 1px solid rgba(13, 110, 253, 0.3);
+            color: #7eb8ff;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 32px;
+            letter-spacing: 1px;
+        }
+
+        .cover-title {
+            font-size: 52px;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 16px;
+            letter-spacing: -1px;
+        }
+
+        .cover-title span {
+            color: var(--primary);
+        }
+
+        .cover-subtitle {
+            font-size: 18px;
+            color: rgba(255,255,255,0.7);
+            font-weight: 300;
+            line-height: 1.6;
+            margin-bottom: 48px;
+        }
+
+        .cover-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .cover-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            color: rgba(255,255,255,0.6);
+        }
+
+        .cover-meta-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .cover-right {
+            width: 520px;
+            background: var(--gray-50);
+            padding: 64px 48px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 24px;
+        }
+
+        .cover-info-card {
+            background: var(--white);
+            border-radius: var(--radius-md);
+            padding: 24px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .cover-info-card h4 {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--gray-500);
+            margin-bottom: 16px;
+            font-weight: 600;
+        }
+
+        .tech-stack-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .tech-tag {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .tech-tag.backend { background: #e8f5e9; color: #2e7d32; }
+        .tech-tag.database { background: #e3f2fd; color: #1565c0; }
+        .tech-tag.frontend { background: #fff3e0; color: #e65100; }
+        .tech-tag.deploy { background: #f3e5f5; color: #7b1fa2; }
+
+        .tech-tag-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .tech-tag.backend .tech-tag-dot { background: #2e7d32; }
+        .tech-tag.database .tech-tag-dot { background: #1565c0; }
+        .tech-tag.frontend .tech-tag-dot { background: #e65100; }
+        .tech-tag.deploy .tech-tag-dot { background: #7b1fa2; }
+
+        .team-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .team-member {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+        }
+
+        .team-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 13px;
+            color: var(--white);
+        }
+
+        .team-avatar.a { background: var(--primary); }
+        .team-avatar.b { background: var(--success); }
+        .team-avatar.c { background: var(--danger); }
+
+        .team-role {
+            font-size: 12px;
+            color: var(--gray-500);
+        }
+
+        /* ========== Page 2: Project Summary + User Flow ========== */
+        .content-slide {
+            padding: 56px 64px;
+        }
+
+        .slide-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 40px;
+        }
+
+        .slide-header-num {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-md);
+            background: var(--primary);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 20px;
+        }
+
+        .slide-header-text h2 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+
+        .slide-header-text p {
+            font-size: 14px;
+            color: var(--gray-500);
+            margin-top: 2px;
+        }
+
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+        }
+
+        .three-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 24px;
+        }
+
+        .section-card {
+            background: var(--gray-50);
+            border-radius: var(--radius-md);
+            padding: 28px;
+        }
+
+        .section-card h3 {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-card h3 .icon {
+            font-size: 18px;
+        }
+
+        .value-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .value-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .value-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .value-icon.blue { background: var(--primary-light); color: var(--primary); }
+        .value-icon.green { background: var(--success-light); color: var(--success); }
+        .value-icon.red { background: var(--danger-light); color: var(--danger); }
+        .value-icon.yellow { background: var(--warning-light); color: #856404; }
+        .value-icon.info { background: var(--info-light); color: var(--info); }
+
+        /* MVP Feature Tags */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .feature-card {
+            background: var(--white);
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            border: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .feature-num {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .feature-text {
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        /* User Flow Diagram */
+        .flow-container {
+            background: var(--white);
+            border-radius: var(--radius-md);
+            padding: 32px;
+            border: 1px solid var(--gray-200);
+        }
+
+        .flow-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .flow-box {
+            padding: 12px 20px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 600;
+            text-align: center;
+            min-width: 120px;
+        }
+
+        .flow-box.auth {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .flow-box.feature {
+            background: var(--primary-light);
+            color: var(--primary-dark);
+            border: 1px solid rgba(13, 110, 253, 0.2);
+        }
+
+        .flow-box.sub {
+            background: var(--gray-100);
+            color: var(--gray-700);
+            border: 1px solid var(--gray-300);
+            font-size: 12px;
+            font-weight: 500;
+            min-width: 100px;
+        }
+
+        .flow-arrow {
+            color: var(--gray-400);
+            font-size: 18px;
+        }
+
+        .flow-arrow-down {
+            text-align: center;
+            color: var(--gray-400);
+            font-size: 18px;
+            margin: 8px 0;
+        }
+
+        .flow-group {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-top: 8px;
+        }
+
+        .flow-branch {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .flow-subs {
+            display: flex;
+            gap: 8px;
+        }
+
+        /* ========== Page 3: Architecture ========== */
+        .arch-diagram {
+            background: linear-gradient(135deg, var(--dark) 0%, var(--dark-secondary) 100%);
+            border-radius: var(--radius-md);
+            padding: 40px;
+            color: var(--white);
+        }
+
+        .arch-flow {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+        }
+
+        .arch-node {
+            padding: 14px 32px;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 600;
+            text-align: center;
+            min-width: 280px;
+        }
+
+        .arch-node.browser {
+            background: rgba(13, 110, 253, 0.2);
+            border: 1px solid rgba(13, 110, 253, 0.4);
+            color: #7eb8ff;
+        }
+
+        .arch-node.url {
+            background: rgba(255, 193, 7, 0.15);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            color: #ffd54f;
+        }
+
+        .arch-node.view {
+            background: rgba(40, 167, 69, 0.2);
+            border: 1px solid rgba(40, 167, 69, 0.4);
+            color: #81c784;
+        }
+
+        .arch-node.model {
+            background: rgba(220, 53, 69, 0.15);
+            border: 1px solid rgba(220, 53, 69, 0.3);
+            color: #ef9a9a;
+        }
+
+        .arch-node.db {
+            background: rgba(23, 162, 184, 0.2);
+            border: 1px solid rgba(23, 162, 184, 0.4);
+            color: #80deea;
+        }
+
+        .arch-node.template {
+            background: rgba(111, 66, 193, 0.2);
+            border: 1px solid rgba(111, 66, 193, 0.4);
+            color: #b39ddb;
+        }
+
+        .arch-connector {
+            width: 2px;
+            height: 24px;
+            background: rgba(255,255,255,0.2);
+            position: relative;
+        }
+
+        .arch-connector::after {
+            content: '▼';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 8px;
+            color: rgba(255,255,255,0.3);
+        }
+
+        .arch-label {
+            font-size: 11px;
+            color: rgba(255,255,255,0.4);
+            text-align: center;
+            margin: 4px 0;
+        }
+
+        /* MVT Description */
+        .mvt-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .mvt-card {
+            background: var(--white);
+            border-radius: var(--radius-sm);
+            padding: 20px;
+            border-left: 4px solid;
+            text-align: center;
+        }
+
+        .mvt-card.model-card { border-color: var(--danger); }
+        .mvt-card.view-card { border-color: var(--success); }
+        .mvt-card.template-card { border-color: #6f42c1; }
+
+        .mvt-card h4 {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .mvt-card p {
+            font-size: 12px;
+            color: var(--gray-600);
+            line-height: 1.5;
+        }
+
+        /* ========== Page 4: ERD + Data ========== */
+        .erd-container {
+            background: var(--gray-50);
+            border-radius: var(--radius-md);
+            padding: 32px;
+        }
+
+        .erd-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .erd-table {
+            background: var(--white);
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .erd-table-header {
+            padding: 14px 18px;
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .erd-table-header.user { background: var(--gray-800); }
+        .erd-table-header.account { background: var(--primary); }
+        .erd-table-header.transaction { background: var(--success); }
+        .erd-table-header.category { background: #e65100; }
+        .erd-table-header.attachment { background: #6f42c1; }
+
+        .erd-table-body {
+            padding: 8px 0;
+        }
+
+        .erd-field {
+            padding: 6px 18px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .erd-field-badge {
+            font-size: 9px;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: 700;
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+
+        .erd-field-badge.pk { background: #ffd54f; color: #5d4037; }
+        .erd-field-badge.fk { background: #e3f2fd; color: #1565c0; }
+        .erd-field-badge.req { background: var(--danger-light); color: var(--danger); }
+
+        .erd-relations {
+            background: var(--white);
+            border-radius: var(--radius-sm);
+            padding: 20px;
+            border: 1px solid var(--gray-200);
+            margin-top: 20px;
+        }
+
+        .erd-relations h4 {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .relation-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .relation-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px;
+            background: var(--gray-50);
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .relation-badge {
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        /* ========== Page 5: Core Features ========== */
+        .feature-detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .feature-detail-card {
+            background: var(--gray-50);
+            border-radius: var(--radius-md);
+            padding: 28px;
+            border: 1px solid var(--gray-200);
+        }
+
+        .feature-detail-card h3 {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .feature-detail-card h3 .badge {
+            font-size: 11px;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+        .badge-blue { background: var(--primary-light); color: var(--primary); }
+        .badge-green { background: var(--success-light); color: var(--success); }
+        .badge-red { background: var(--danger-light); color: var(--danger); }
+        .badge-purple { background: #f3e5f5; color: #7b1fa2; }
+        .badge-orange { background: #fff3e0; color: #e65100; }
+
+        .detail-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .detail-table td {
+            padding: 8px 12px;
+            font-size: 13px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .detail-table td:first-child {
+            font-weight: 600;
+            color: var(--gray-700);
+            width: 100px;
+            white-space: nowrap;
+        }
+
+        .detail-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* ========== Page 6: Security ========== */
+        .security-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        .security-card {
+            background: var(--gray-50);
+            border-radius: var(--radius-md);
+            padding: 24px;
+            border-left: 4px solid;
+        }
+
+        .security-card.auth { border-color: var(--primary); }
+        .security-card.filter { border-color: var(--success); }
+        .security-card.csrf { border-color: var(--danger); }
+        .security-card.mask { border-color: var(--warning); }
+
+        .security-card h4 {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .security-check-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .security-check {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+        }
+
+        .check-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--success);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            flex-shrink: 0;
+        }
+
+        /* Admin Section */
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--white);
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+        }
+
+        .admin-table thead th {
+            background: var(--gray-800);
+            color: var(--white);
+            padding: 12px 16px;
+            font-size: 12px;
+            font-weight: 600;
+            text-align: left;
+        }
+
+        .admin-table tbody td {
+            padding: 10px 16px;
+            font-size: 13px;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .admin-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .code-inline {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--gray-100);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: var(--danger);
+        }
+
+        /* ========== Page 7: Test & CI ========== */
+        .test-summary {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .test-stat {
+            background: var(--white);
+            border-radius: var(--radius-sm);
+            padding: 20px;
+            text-align: center;
+            border: 1px solid var(--gray-200);
+        }
+
+        .test-stat-value {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--primary);
+            line-height: 1;
+        }
+
+        .test-stat-label {
+            font-size: 12px;
+            color: var(--gray-500);
+            margin-top: 4px;
+        }
+
+        .ci-pipeline {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
+            padding: 24px 16px;
+            background: var(--gray-50);
+            border-radius: var(--radius-md);
+            overflow-x: auto;
+        }
+
+        .ci-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            min-width: 100px;
+        }
+
+        .ci-step-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .ci-step-icon.push { background: var(--primary-light); color: var(--primary); }
+        .ci-step-icon.actions { background: var(--gray-800); color: var(--white); }
+        .ci-step-icon.docker { background: #e3f2fd; color: #1565c0; }
+        .ci-step-icon.migrate { background: var(--warning-light); color: #856404; }
+        .ci-step-icon.deploy { background: var(--success-light); color: var(--success); }
+
+        .ci-step-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--gray-700);
+            text-align: center;
+        }
+
+        .ci-arrow {
+            width: 40px;
+            height: 2px;
+            background: var(--gray-300);
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .ci-arrow::after {
+            content: '▶';
+            position: absolute;
+            right: -4px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 8px;
+            color: var(--gray-400);
+        }
+
+        /* Deploy */
+        .deploy-compare {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            border: 1px solid var(--gray-200);
+        }
+
+        .deploy-col {
+            padding: 24px;
+        }
+
+        .deploy-col.local {
+            background: var(--white);
+        }
+
+        .deploy-col.prod {
+            background: var(--gray-50);
+        }
+
+        .deploy-col h4 {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .deploy-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--gray-100);
+            font-size: 13px;
+        }
+
+        .deploy-item:last-child {
+            border-bottom: none;
+        }
+
+        .deploy-item-key {
+            color: var(--gray-600);
+        }
+
+        .deploy-item-val {
+            font-weight: 600;
+        }
+
+        /* ========== Page 8: PR & Git ========== */
+        .git-branch-visual {
+            background: var(--dark);
+            border-radius: var(--radius-md);
+            padding: 32px;
+            color: var(--white);
+        }
+
+        .branch-row {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .branch-name {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-weight: 600;
+            min-width: 180px;
+            text-align: center;
+        }
+
+        .branch-name.main { background: rgba(40, 167, 69, 0.2); color: #81c784; border: 1px solid rgba(40, 167, 69, 0.3); }
+        .branch-name.dev { background: rgba(13, 110, 253, 0.2); color: #7eb8ff; border: 1px solid rgba(13, 110, 253, 0.3); }
+        .branch-name.feature { background: rgba(255, 193, 7, 0.15); color: #ffd54f; border: 1px solid rgba(255, 193, 7, 0.3); }
+
+        .branch-desc {
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .commit-type-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .commit-type {
+            background: var(--white);
+            border-radius: var(--radius-sm);
+            padding: 14px;
+            text-align: center;
+            border: 1px solid var(--gray-200);
+        }
+
+        .commit-type-name {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .commit-type-desc {
+            font-size: 11px;
+            color: var(--gray-600);
+        }
+
+        /* Troubleshooting */
+        .trouble-card {
+            background: var(--gray-50);
+            border-radius: var(--radius-md);
+            padding: 24px;
+            border-left: 4px solid;
+            margin-bottom: 16px;
+        }
+
+        .trouble-card.issue1 { border-color: var(--danger); }
+        .trouble-card.issue2 { border-color: var(--warning); }
+        .trouble-card.issue3 { border-color: var(--info); }
+
+        .trouble-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .trouble-num {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--white);
+        }
+
+        .trouble-num.n1 { background: var(--danger); }
+        .trouble-num.n2 { background: var(--warning); color: var(--gray-800); }
+        .trouble-num.n3 { background: var(--info); }
+
+        .trouble-title {
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .trouble-row {
+            display: grid;
+            grid-template-columns: 80px 1fr;
+            gap: 8px;
+            font-size: 13px;
+            margin-bottom: 4px;
+        }
+
+        .trouble-row-label {
+            color: var(--gray-500);
+            font-weight: 600;
+        }
+
+        /* Roadmap */
+        .roadmap-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .roadmap-item {
+            background: var(--white);
+            border-radius: var(--radius-md);
+            padding: 24px;
+            border: 1px solid var(--gray-200);
+            text-align: center;
+            transition: transform 0.2s;
+        }
+
+        .roadmap-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-md);
+            margin: 0 auto 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .roadmap-item:nth-child(1) .roadmap-icon { background: #e3f2fd; }
+        .roadmap-item:nth-child(2) .roadmap-icon { background: #e8f5e9; }
+        .roadmap-item:nth-child(3) .roadmap-icon { background: #fff3e0; }
+        .roadmap-item:nth-child(4) .roadmap-icon { background: #f3e5f5; }
+        .roadmap-item:nth-child(5) .roadmap-icon { background: #e0f7fa; }
+        .roadmap-item:nth-child(6) .roadmap-icon { background: #fce4ec; }
+
+        .roadmap-item h4 {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .roadmap-item p {
+            font-size: 12px;
+            color: var(--gray-600);
+            line-height: 1.5;
+        }
+
+        /* Lessons */
+        .lesson-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+        }
+
+        .lesson-item {
+            background: var(--white);
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            text-align: center;
+            border: 1px solid var(--gray-200);
+        }
+
+        .lesson-category {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .lesson-text {
+            font-size: 12px;
+            color: var(--gray-700);
+            line-height: 1.5;
+        }
+
+        /* Utility */
+        .mt-16 { margin-top: 16px; }
+        .mt-24 { margin-top: 24px; }
+        .mt-32 { margin-top: 32px; }
+        .mb-16 { margin-bottom: 16px; }
+        .mb-24 { margin-bottom: 24px; }
+
+        .divider {
+            height: 1px;
+            background: var(--gray-200);
+            margin: 24px 0;
+        }
+
+        .text-center { text-align: center; }
+        .text-sm { font-size: 13px; }
+        .text-xs { font-size: 12px; }
+        .text-muted { color: var(--gray-500); }
+        .fw-bold { font-weight: 700; }
+
+        /* Full width section card */
+        .section-card-full {
+            background: var(--gray-50);
+            border-radius: var(--radius-md);
+            padding: 28px;
+            margin-top: 24px;
+        }
+
+        .section-card-full h3 {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        /* Security checklist final */
+        .security-final {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .security-final-item {
+            background: var(--white);
+            border-radius: var(--radius-sm);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            border: 1px solid var(--gray-200);
+        }
+
+        /* Print styles */
+        @media print {
+            body { background: white; }
+            .slide {
+                margin: 0;
+                border-radius: 0;
+                box-shadow: none;
+                page-break-after: always;
+                min-height: 100vh;
+            }
+        }
+
+        /* Constraint table */
+        .constraint-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .constraint-table th {
+            background: var(--gray-100);
+            padding: 10px 14px;
+            font-size: 12px;
+            font-weight: 700;
+            text-align: left;
+            color: var(--gray-700);
+        }
+
+        .constraint-table td {
+            padding: 8px 14px;
+            font-size: 13px;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .constraint-table tr:last-child td {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+
+<!-- ============================================================ -->
+<!-- PAGE 1: Cover / 표지 -->
+<!-- ============================================================ -->
+<div class="slide">
+    <div class="cover-slide">
+        <div class="cover-left">
+            <div class="cover-badge">TECHNICAL DOCUMENT 2026</div>
+            <h1 class="cover-title">
+                Personal<br><span>Account</span>Book
+            </h1>
+            <p class="cover-subtitle">
+                서버 렌더링 기반 Django 개인 가계부 웹 애플리케이션<br>
+                계좌 기반 입출금 기록 및 월별 대시보드 요약 서비스
+            </p>
+            <div class="cover-meta">
+                <div class="cover-meta-item">
+                    <div class="cover-meta-icon">📅</div>
+                    <span>개발 기간: 2026.01 ~ 2026.02</span>
+                </div>
+                <div class="cover-meta-item">
+                    <div class="cover-meta-icon">👥</div>
+                    <span>팀 프로젝트 (3인)</span>
+                </div>
+                <div class="cover-meta-item">
+                    <div class="cover-meta-icon">🌐</div>
+                    <span>accountbook-project.fly.dev</span>
+                </div>
+            </div>
+        </div>
+        <div class="cover-right">
+            <div class="cover-info-card">
+                <h4>Tech Stack</h4>
+                <div class="tech-stack-grid">
+                    <div class="tech-tag backend"><span class="tech-tag-dot"></span>Django 4.2</div>
+                    <div class="tech-tag database"><span class="tech-tag-dot"></span>PostgreSQL</div>
+                    <div class="tech-tag frontend"><span class="tech-tag-dot"></span>Bootstrap 5</div>
+                    <div class="tech-tag deploy"><span class="tech-tag-dot"></span>Fly.io</div>
+                    <div class="tech-tag deploy"><span class="tech-tag-dot"></span>Docker</div>
+                    <div class="tech-tag deploy"><span class="tech-tag-dot"></span>Gunicorn</div>
+                    <div class="tech-tag backend"><span class="tech-tag-dot"></span>GitHub Actions</div>
+                    <div class="tech-tag frontend"><span class="tech-tag-dot"></span>Chart.js</div>
+                </div>
+            </div>
+            <div class="cover-info-card">
+                <h4>Team</h4>
+                <div class="team-list">
+                    <div class="team-member">
+                        <div class="team-avatar a">A</div>
+                        <div>
+                            <div style="font-weight:600">팀원 A</div>
+                            <div class="team-role">인증 및 계좌 관리 (accounts)</div>
+                        </div>
+                    </div>
+                    <div class="team-member">
+                        <div class="team-avatar b">B</div>
+                        <div>
+                            <div style="font-weight:600">팀원 B</div>
+                            <div class="team-role">거래 관리 및 필터링 (transactions)</div>
+                        </div>
+                    </div>
+                    <div class="team-member">
+                        <div class="team-avatar c">C</div>
+                        <div>
+                            <div style="font-weight:600">팀원 C</div>
+                            <div class="team-role">대시보드 및 영수증 관리 (dashboard)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="slide-number">01 / 07</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- PAGE 2: Project Summary + User Flow -->
+<!-- ============================================================ -->
+<div class="slide">
+    <div class="content-slide">
+        <div class="slide-header">
+            <div class="slide-header-num">01</div>
+            <div class="slide-header-text">
+                <h2>프로젝트 요약 & 사용자 흐름</h2>
+                <p>비즈니스 관점 요약 및 화면 흐름 다이어그램</p>
+            </div>
+        </div>
+
+        <div class="two-col">
+            <!-- Left: Summary -->
+            <div>
+                <div class="section-card mb-24">
+                    <h3>🎯 핵심 가치</h3>
+                    <div class="value-list">
+                        <div class="value-item">
+                            <div class="value-icon blue">💰</div>
+                            <span>계좌 기반 입출금 기록 및 잔액 자동 관리</span>
+                        </div>
+                        <div class="value-item">
+                            <div class="value-icon green">🔍</div>
+                            <span>필터/검색 기반 거래 내역 조회</span>
+                        </div>
+                        <div class="value-item">
+                            <div class="value-icon red">📊</div>
+                            <span>월별 수입/지출 요약 대시보드 제공</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-card">
+                    <h3>📋 MVP 기능 목록</h3>
+                    <div class="feature-grid">
+                        <div class="feature-card">
+                            <div class="feature-num">1</div>
+                            <div class="feature-text">사용자 인증<br><span class="text-xs text-muted">회원가입 / 로그인 / 로그아웃</span></div>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-num">2</div>
+                            <div class="feature-text">계좌 CRUD<br><span class="text-xs text-muted">생성 / 조회 / 수정 / 삭제</span></div>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-num">3</div>
+                            <div class="feature-text">거래 CRUD<br><span class="text-xs text-muted">입금 / 출금 기록 관리</span></div>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-num">4</div>
+                            <div class="feature-text">필터 / 검색 / 정렬<br><span class="text-xs text-muted">기간, 계좌, 카테고리</span></div>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-num">5</div>
+                            <div class="feature-text">영수증 업로드<br><span class="text-xs text-muted">이미지 / PDF 첨부</span></div>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-num">6</div>
+                            <div class="feature-text">대시보드 요약<br><span class="text-xs text-muted">월별 통계, 달력</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: User Flow -->
+            <div>
+                <div class="section-card" style="height: 100%;">
+                    <h3>🔀 화면 흐름 다이어그램</h3>
+                    <div class="flow-container">
+                        <!-- Auth -->
+                        <div class="flow-row">
+                            <div class="flow-box auth">비인증 사용자</div>
+                        </div>
+                        <div class="flow-arrow-down">▼</div>
+                        <div class="flow-row">
+                            <div class="flow-box auth">로그인 / 회원가입</div>
+                        </div>
+                        <div class="flow-arrow-down">▼</div>
+                        <div class="flow-row">
+                            <div class="flow-box" style="background:#e8f5e9;color:#2e7d32;border:1px solid #a5d6a7;font-size:12px;">인증 완료</div>
+                        </div>
+                        <div class="flow-arrow-down">▼</div>
+
+                        <!-- Main branches -->
+                        <div class="flow-group">
+                            <div class="flow-branch">
+                                <div class="flow-box feature">계좌 목록</div>
+                                <div class="flow-subs">
+                                    <div class="flow-box sub">상세</div>
+                                    <div class="flow-box sub">수정/삭제</div>
+                                </div>
+                            </div>
+                            <div class="flow-branch">
+                                <div class="flow-box feature">거래 목록</div>
+                                <div class="flow-subs">
+                                    <div class="flow-box sub">필터/검색</div>
+                                    <div class="flow-box sub">영수증</div>
+                                </div>
+                            </div>
+                            <div class="flow-branch">
+                                <div class="flow-box feature">대시보드</div>
+                                <div class="flow-subs">
+                                    <div class="flow-box sub">통계</div>
+                                    <div class="flow-box sub">달력</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top:16px; padding:12px; background:var(--white); border-radius:var(--radius-sm); border:1px solid var(--gray-200);">
+                        <p class="text-xs text-muted"><strong>설계 의도:</strong> UI 중심이 아니라 사용자 행동 흐름 기준으로 정의. 데이터 소유권 기준: 계좌 → 거래 → 영수증 계층 구조</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="slide-number">02 / 07</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- PAGE 3: Architecture + ERD -->
+<!-- ============================================================ -->
+<div class="slide">
+    <div class="content-slide">
+        <div class="slide-header">
+            <div class="slide-header-num">02</div>
+            <div class="slide-header-text">
+                <h2>시스템 아키텍처 & 데이터베이스 설계</h2>
+                <p>MVT 패턴 기반 요청 흐름 및 ERD</p>
+            </div>
+        </div>
+
+        <div class="two-col">
+            <!-- Left: Architecture -->
+            <div>
+                <div class="arch-diagram">
+                    <div style="font-size:13px;font-weight:600;margin-bottom:20px;opacity:0.6">MVT Request Flow</div>
+                    <div class="arch-flow">
+                        <div class="arch-node browser">🌐 Browser</div>
+                        <div class="arch-connector"></div>
+                        <div class="arch-label">GET /transactions/</div>
+                        <div class="arch-node url">📍 urls.py</div>
+                        <div class="arch-connector"></div>
+                        <div class="arch-node view">⚙️ TransactionListView</div>
+                        <div class="arch-connector"></div>
+                        <div class="arch-node model">📦 Transaction.objects.filter()</div>
+                        <div class="arch-connector"></div>
+                        <div class="arch-node db">🗄️ PostgreSQL DB</div>
+                        <div class="arch-connector"></div>
+                        <div class="arch-node template">🎨 transaction_list.html</div>
+                        <div class="arch-connector"></div>
+                        <div class="arch-node browser">🌐 Browser (HTML Response)</div>
+                    </div>
+                </div>
+
+                <div class="mvt-grid">
+                    <div class="mvt-card model-card">
+                        <h4>Model</h4>
+                        <p>데이터 처리 및<br>비즈니스 로직 담당</p>
+                    </div>
+                    <div class="mvt-card view-card">
+                        <h4>View</h4>
+                        <p>요청의 중심 역할<br>URL → View 매핑</p>
+                    </div>
+                    <div class="mvt-card template-card">
+                        <h4>Template</h4>
+                        <p>화면 렌더링 전담<br>서버에서 HTML 생성</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: ERD -->
+            <div>
+                <div class="erd-container">
+                    <div style="font-size:14px;font-weight:700;margin-bottom:16px;">ERD (Entity Relationship Diagram)</div>
+                    <div class="erd-grid" style="grid-template-columns: 1fr 1fr;">
+                        <div class="erd-table">
+                            <div class="erd-table-header account">🏦 Account</div>
+                            <div class="erd-table-body">
+                                <div class="erd-field"><span class="erd-field-badge pk">PK</span> id</div>
+                                <div class="erd-field"><span class="erd-field-badge fk">FK</span> user_id</div>
+                                <div class="erd-field"><span class="erd-field-badge req">REQ</span> name</div>
+                                <div class="erd-field">bank_name</div>
+                                <div class="erd-field">account_number</div>
+                                <div class="erd-field">balance</div>
+                                <div class="erd-field">is_active</div>
+                            </div>
+                        </div>
+
+                        <div class="erd-table">
+                            <div class="erd-table-header transaction">💳 Transaction</div>
+                            <div class="erd-table-body">
+                                <div class="erd-field"><span class="erd-field-badge pk">PK</span> id</div>
+                                <div class="erd-field"><span class="erd-field-badge fk">FK</span> user_id</div>
+                                <div class="erd-field"><span class="erd-field-badge fk">FK</span> account_id</div>
+                                <div class="erd-field"><span class="erd-field-badge fk">FK</span> category_id</div>
+                                <div class="erd-field">tx_type (IN/OUT)</div>
+                                <div class="erd-field">amount</div>
+                                <div class="erd-field">occurred_at</div>
+                                <div class="erd-field">merchant, memo</div>
+                            </div>
+                        </div>
+
+                        <div class="erd-table">
+                            <div class="erd-table-header category">📁 Category</div>
+                            <div class="erd-table-body">
+                                <div class="erd-field"><span class="erd-field-badge pk">PK</span> id</div>
+                                <div class="erd-field"><span class="erd-field-badge fk">FK</span> user_id</div>
+                                <div class="erd-field"><span class="erd-field-badge req">REQ</span> name</div>
+                                <div class="erd-field">type (IN/OUT/BOTH)</div>
+                            </div>
+                        </div>
+
+                        <div class="erd-table">
+                            <div class="erd-table-header attachment">📎 Attachment</div>
+                            <div class="erd-table-body">
+                                <div class="erd-field"><span class="erd-field-badge pk">PK</span> id</div>
+                                <div class="erd-field"><span class="erd-field-badge fk">FK</span> user_id</div>
+                                <div class="erd-field"><span class="erd-field-badge fk">1:1</span> transaction_id</div>
+                                <div class="erd-field">file, original_name</div>
+                                <div class="erd-field">size, content_type</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="erd-relations">
+                        <h4>관계 요약</h4>
+                        <div class="relation-grid">
+                            <div class="relation-item">
+                                User <span class="relation-badge">1:N</span> Account
+                            </div>
+                            <div class="relation-item">
+                                User <span class="relation-badge">1:N</span> Transaction
+                            </div>
+                            <div class="relation-item">
+                                User <span class="relation-badge">1:N</span> Category
+                            </div>
+                            <div class="relation-item">
+                                Account <span class="relation-badge">1:N</span> Transaction
+                            </div>
+                            <div class="relation-item">
+                                Category <span class="relation-badge">1:N</span> Transaction
+                            </div>
+                            <div class="relation-item">
+                                Transaction <span class="relation-badge">1:1</span> Attachment
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="slide-number">03 / 07</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- PAGE 4: Core Features -->
+<!-- ============================================================ -->
+<div class="slide">
+    <div class="content-slide">
+        <div class="slide-header">
+            <div class="slide-header-num">03</div>
+            <div class="slide-header-text">
+                <h2>핵심 기능 구현 상세</h2>
+                <p>views.py 기준 기능별 구현 내용 및 동작 기준</p>
+            </div>
+        </div>
+
+        <div class="feature-detail-grid">
+            <!-- Auth -->
+            <div class="feature-detail-card">
+                <h3>🔐 인증 시스템 <span class="badge badge-blue">Session Auth</span></h3>
+                <table class="detail-table">
+                    <tr><td>인증 방식</td><td>Django 기본 인증 (django.contrib.auth)</td></tr>
+                    <tr><td>회원가입</td><td>UserCreationForm 기반</td></tr>
+                    <tr><td>로그인</td><td>AuthenticationForm, 세션 로그인</td></tr>
+                    <tr><td>로그아웃</td><td>POST 요청, 세션 종료</td></tr>
+                    <tr><td>접근 제어</td><td>LoginRequiredMixin</td></tr>
+                    <tr><td>홈 분기</td><td>로그인 O → 대시보드, X → 로그인</td></tr>
+                </table>
+            </div>
+
+            <!-- Account -->
+            <div class="feature-detail-card">
+                <h3>🏦 계좌 CRUD <span class="badge badge-green">Account</span></h3>
+                <table class="detail-table">
+                    <tr><td>생성</td><td>계좌명, 은행명, 계좌번호, 초기 잔액</td></tr>
+                    <tr><td>조회</td><td>본인 활성 계좌만 (is_active=True)</td></tr>
+                    <tr><td>수정</td><td>계좌명, 은행명, 계좌번호, 잔액</td></tr>
+                    <tr><td>삭제</td><td>비활성 처리 (소프트 삭제)</td></tr>
+                    <tr><td>마스킹</td><td>110-***-6789 형식 출력</td></tr>
+                    <tr><td>요약</td><td>전체 수입/지출/순자산 표시</td></tr>
+                </table>
+            </div>
+
+            <!-- Transaction -->
+            <div class="feature-detail-card">
+                <h3>💳 거래 CRUD <span class="badge badge-red">Transaction</span></h3>
+                <table class="detail-table">
+                    <tr><td>생성</td><td>입금/출금 등록, 잔액 자동 반영</td></tr>
+                    <tr><td>조회</td><td>사용자별 활성 계좌 거래만</td></tr>
+                    <tr><td>수정</td><td>금액/날짜/메모, 잔액 재계산</td></tr>
+                    <tr><td>삭제</td><td>거래 삭제, 잔액 자동 복원</td></tr>
+                    <tr><td>금액 검증</td><td>0 초과, 최대 100억 제한</td></tr>
+                    <tr><td>카테고리</td><td>거래 유형별 필터 (IN/OUT)</td></tr>
+                </table>
+            </div>
+
+            <!-- Filter -->
+            <div class="feature-detail-card">
+                <h3>🔍 필터 / 검색 / 정렬 <span class="badge badge-purple">GET 기반</span></h3>
+                <table class="detail-table">
+                    <tr><td>기간 필터</td><td>start_date ~ end_date</td></tr>
+                    <tr><td>계좌 필터</td><td>account (특정 계좌)</td></tr>
+                    <tr><td>카테고리</td><td>category (거래 분류)</td></tr>
+                    <tr><td>거래 유형</td><td>tx_type (IN / OUT)</td></tr>
+                    <tr><td>키워드</td><td>q (메모, 가맹점)</td></tr>
+                    <tr><td>정렬</td><td>-occurred_at (최신순)</td></tr>
+                </table>
+            </div>
+
+            <!-- Receipt -->
+            <div class="feature-detail-card">
+                <h3>📎 영수증 업로드 <span class="badge badge-orange">Attachment</span></h3>
+                <table class="detail-table">
+                    <tr><td>대상</td><td>거래(Transaction) 단위</td></tr>
+                    <tr><td>허용 파일</td><td>jpg, jpeg, png, pdf</td></tr>
+                    <tr><td>파일 수</td><td>거래당 1개 (OneToOneField)</td></tr>
+                    <tr><td>용량 제한</td><td>5MB 이하</td></tr>
+                    <tr><td>검증</td><td>확장자 + 용량 + PIL 이미지 확인</td></tr>
+                    <tr><td>저장 위치</td><td>media/receipts/YYYY/MM/DD/</td></tr>
+                </table>
+            </div>
+
+            <!-- Dashboard -->
+            <div class="feature-detail-card">
+                <h3>📊 대시보드 <span class="badge badge-blue">Dashboard</span></h3>
+                <table class="detail-table">
+                    <tr><td>월별 요약</td><td>총수입 / 총지출 / 순합</td></tr>
+                    <tr><td>카테고리</td><td>지출 Top 5 합계 및 비율</td></tr>
+                    <tr><td>달력</td><td>날짜별 수입/지출 표시</td></tr>
+                    <tr><td>최근 거래</td><td>최대 4건 표시</td></tr>
+                    <tr><td>계좌 필터</td><td>특정 계좌 기준 통계</td></tr>
+                    <tr><td>월 변경</td><td>?month=2026-02 쿼리스트링</td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="slide-number">04 / 07</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- PAGE 5: Security + Admin -->
+<!-- ============================================================ -->
+<div class="slide">
+    <div class="content-slide">
+        <div class="slide-header">
+            <div class="slide-header-num">04</div>
+            <div class="slide-header-text">
+                <h2>보안 설계 & 관리자 페이지</h2>
+                <p>인증/권한 정책 및 Admin 커스터마이징</p>
+            </div>
+        </div>
+
+        <!-- Security -->
+        <div class="security-grid mb-24">
+            <div class="security-card auth">
+                <h4>🔒 LoginRequired 정책</h4>
+                <div class="security-check-list">
+                    <div class="security-check"><span class="check-icon">✓</span> LoginRequiredMixin 적용</div>
+                    <div class="security-check"><span class="check-icon">✓</span> 비인증 사용자 → 로그인 페이지 리디렉션</div>
+                    <div class="security-check"><span class="check-icon">✓</span> 계좌/거래/대시보드/카테고리 보호</div>
+                </div>
+            </div>
+
+            <div class="security-card filter">
+                <h4>🛡️ QuerySet user 필터링</h4>
+                <div class="security-check-list">
+                    <div class="security-check"><span class="check-icon">✓</span> <span class="code-inline">filter(user=request.user)</span></div>
+                    <div class="security-check"><span class="check-icon">✓</span> 본인 데이터만 반환</div>
+                    <div class="security-check"><span class="check-icon">✓</span> 타 사용자 접근 시 404 응답</div>
+                </div>
+            </div>
+
+            <div class="security-card csrf">
+                <h4>🔑 CSRF 보호</h4>
+                <div class="security-check-list">
+                    <div class="security-check"><span class="check-icon">✓</span> CsrfViewMiddleware 활성화</div>
+                    <div class="security-check"><span class="check-icon">✓</span> POST 요청 CSRF 토큰 검증</div>
+                    <div class="security-check"><span class="check-icon">✓</span> AJAX 요청에도 CSRF 전달</div>
+                </div>
+            </div>
+
+            <div class="security-card mask">
+                <h4>🔏 민감정보 마스킹</h4>
+                <div class="security-check-list">
+                    <div class="security-check"><span class="check-icon">✓</span> 계좌번호: <span class="code-inline">110-***-6789</span></div>
+                    <div class="security-check"><span class="check-icon">✓</span> 비밀번호: PBKDF2 해시 저장</div>
+                    <div class="security-check"><span class="check-icon">✓</span> Admin에서도 마스킹 표시</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Security Summary -->
+        <div class="security-final mb-24">
+            <div class="security-final-item"><span class="check-icon">✓</span> 로그인 필수 분리</div>
+            <div class="security-final-item"><span class="check-icon">✓</span> 본인 데이터만 조회</div>
+            <div class="security-final-item"><span class="check-icon">✓</span> URL 직접 접근 차단</div>
+            <div class="security-final-item"><span class="check-icon">✓</span> CSRF 보호</div>
+            <div class="security-final-item"><span class="check-icon">✓</span> 비밀번호 해시 저장</div>
+            <div class="security-final-item"><span class="check-icon">✓</span> 민감정보 마스킹</div>
+            <div class="security-final-item"><span class="check-icon">✓</span> 비밀번호 강도 검증</div>
+            <div class="security-final-item"><span class="check-icon">✓</span> 404 리소스 은닉</div>
+        </div>
+
+        <!-- Admin -->
+        <div class="section-card-full" style="margin-top:0">
+            <h3>⚙️ Admin 커스터마이징</h3>
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>모델</th>
+                        <th>list_display</th>
+                        <th>list_filter</th>
+                        <th>커스터마이징 포인트</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Account</strong></td>
+                        <td>user, name, bank_name, 계좌번호(마스킹), balance</td>
+                        <td>is_active, bank_name</td>
+                        <td>계좌번호 마스킹 표시</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Transaction</strong></td>
+                        <td>occurred_at, user, 유형(뱃지), 금액(컬러)</td>
+                        <td>tx_type, category</td>
+                        <td>컬러 뱃지, 금액 색상, date_hierarchy</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Category</strong></td>
+                        <td>name, type(뱃지)</td>
+                        <td>type</td>
+                        <td>타입별 컬러 뱃지</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="slide-number">05 / 07</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- PAGE 6: Test/CI + Deploy -->
+<!-- ============================================================ -->
+<div class="slide">
+    <div class="content-slide">
+        <div class="slide-header">
+            <div class="slide-header-num">05</div>
+            <div class="slide-header-text">
+                <h2>테스트 & CI/CD & 배포</h2>
+                <p>테스트 범위, GitHub Actions CI 파이프라인, Fly.io 배포</p>
+            </div>
+        </div>
+
+        <!-- Test Summary Stats -->
+        <div class="test-summary">
+            <div class="test-stat">
+                <div class="test-stat-value">3</div>
+                <div class="test-stat-label">테스트 앱</div>
+            </div>
+            <div class="test-stat">
+                <div class="test-stat-value">11</div>
+                <div class="test-stat-label">테스트 범위 항목</div>
+            </div>
+            <div class="test-stat">
+                <div class="test-stat-value" style="color:var(--success)">✓</div>
+                <div class="test-stat-label">CI 파이프라인</div>
+            </div>
+            <div class="test-stat">
+                <div class="test-stat-value" style="color:#6f42c1">🚀</div>
+                <div class="test-stat-label">Fly.io 배포</div>
+            </div>
+        </div>
+
+        <div class="two-col">
+            <!-- Left: Test + CI -->
+            <div>
+                <div class="section-card mb-24">
+                    <h3>🧪 테스트 범위</h3>
+                    <table class="constraint-table">
+                        <tr>
+                            <th>구분</th>
+                            <th>테스트 대상</th>
+                        </tr>
+                        <tr><td>모델</td><td>Account 생성/마스킹, Transaction 잔액 연동</td></tr>
+                        <tr><td>폼</td><td>AccountForm 검증, TransactionForm 금액 제한</td></tr>
+                        <tr><td>인증/권한</td><td>비로그인 차단(302), 타 사용자 차단(404)</td></tr>
+                        <tr><td>CRUD</td><td>계좌/거래 생성/조회/수정/삭제</td></tr>
+                        <tr><td>필터/검색</td><td>기간/계좌/타입/키워드 필터링</td></tr>
+                        <tr><td>대시보드</td><td>수입/지출 집계, 월 필터, 데이터 분리</td></tr>
+                    </table>
+                </div>
+
+                <div class="section-card">
+                    <h3>🔄 CI 파이프라인</h3>
+                    <div class="ci-pipeline">
+                        <div class="ci-step">
+                            <div class="ci-step-icon push">📤</div>
+                            <div class="ci-step-label">Push /<br>Manual</div>
+                        </div>
+                        <div class="ci-arrow"></div>
+                        <div class="ci-step">
+                            <div class="ci-step-icon actions">⚡</div>
+                            <div class="ci-step-label">GitHub<br>Actions</div>
+                        </div>
+                        <div class="ci-arrow"></div>
+                        <div class="ci-step">
+                            <div class="ci-step-icon docker">🐳</div>
+                            <div class="ci-step-label">Docker<br>Build</div>
+                        </div>
+                        <div class="ci-arrow"></div>
+                        <div class="ci-step">
+                            <div class="ci-step-icon migrate">📋</div>
+                            <div class="ci-step-label">Migrate</div>
+                        </div>
+                        <div class="ci-arrow"></div>
+                        <div class="ci-step">
+                            <div class="ci-step-icon deploy">✅</div>
+                            <div class="ci-step-label">Deploy<br>Complete</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Deploy -->
+            <div>
+                <div class="section-card mb-24">
+                    <h3>🚀 배포 환경 비교</h3>
+                    <div class="deploy-compare">
+                        <div class="deploy-col local">
+                            <h4>💻 개발 환경 (Local)</h4>
+                            <div class="deploy-item"><span class="deploy-item-key">Python</span><span class="deploy-item-val">3.10</span></div>
+                            <div class="deploy-item"><span class="deploy-item-key">DEBUG</span><span class="deploy-item-val" style="color:var(--success)">True</span></div>
+                            <div class="deploy-item"><span class="deploy-item-key">DB</span><span class="deploy-item-val">PostgreSQL (Local)</span></div>
+                            <div class="deploy-item"><span class="deploy-item-key">Secret</span><span class="deploy-item-val">.env 파일</span></div>
+                            <div class="deploy-item"><span class="deploy-item-key">Static</span><span class="deploy-item-val">Django 개발서버</span></div>
+                            <div class="deploy-item"><span class="deploy-item-key">서버</span><span class="deploy-item-val">runserver</span></div>
+                        </div>
+                        <div class="deploy-col prod">
+                            <h4>☁️ 배포 환경 (Fly.io)</h4>
+                            <div class="deploy-item"><span class="deploy-item-key">Python</span><span class="deploy-item-val">3.12</span></div>
+                            <div class="deploy-item"><span class="deploy-item-key">DEBUG</span><span class="deploy-item-val" style="color:var(--danger)">False</span></div>
+                            <div class="deploy-item"><span class="deploy-item-key">DB</span><span class="deploy-item-val">PostgreSQL (Fly)</span></div>
+                            <div class="deploy-item"><span class="deploy-item-key">Secret</span><span class="deploy-item-val">Fly Secrets</span></div>
+                            <div class="deploy-item"><span class="deploy-item-key">Static</span><span class="deploy-item-val">WhiteNoise</span></div>
+                            <div class="deploy-item"><span class="deploy-item-key">서버</span><span class="deploy-item-val">Gunicorn (2w)</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-card">
+                    <h3>🔧 환경변수 관리</h3>
+                    <table class="constraint-table">
+                        <tr><th>변수</th><th>설명</th></tr>
+                        <tr><td><span class="code-inline">SECRET_KEY</span></td><td>Django 비밀키</td></tr>
+                        <tr><td><span class="code-inline">DB_NAME</span></td><td>데이터베이스 이름</td></tr>
+                        <tr><td><span class="code-inline">DB_USER</span></td><td>DB 사용자</td></tr>
+                        <tr><td><span class="code-inline">DB_PASSWORD</span></td><td>DB 비밀번호</td></tr>
+                        <tr><td><span class="code-inline">DB_HOST</span></td><td>DB 호스트</td></tr>
+                        <tr><td><span class="code-inline">DB_PORT</span></td><td>DB 포트</td></tr>
+                    </table>
+                    <p class="text-xs text-muted mt-16">.env 파일은 .gitignore로 관리, Fly.io는 Secrets 기능 사용</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="slide-number">06 / 07</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- PAGE 7: Git/PR + Troubleshooting + Roadmap -->
+<!-- ============================================================ -->
+<div class="slide">
+    <div class="content-slide">
+        <div class="slide-header">
+            <div class="slide-header-num">06</div>
+            <div class="slide-header-text">
+                <h2>Git 전략 & 트러블슈팅 & 개선 방향</h2>
+                <p>브랜치/PR 전략, 주요 이슈 해결, 향후 로드맵</p>
+            </div>
+        </div>
+
+        <div class="two-col mb-24">
+            <!-- Left: Git Strategy -->
+            <div>
+                <div class="git-branch-visual mb-24">
+                    <div style="font-size:13px;font-weight:600;margin-bottom:16px;opacity:0.6">Branch Strategy</div>
+                    <div class="branch-row">
+                        <div class="branch-name main">main</div>
+                        <div class="branch-desc">항상 배포 가능한 상태 유지</div>
+                    </div>
+                    <div class="branch-row">
+                        <div class="branch-name dev">dev</div>
+                        <div class="branch-desc">개발 통합 브랜치</div>
+                    </div>
+                    <div class="branch-row">
+                        <div class="branch-name feature">feature/accounts</div>
+                        <div class="branch-desc">계좌 기능 개발</div>
+                    </div>
+                    <div class="branch-row">
+                        <div class="branch-name feature">feature/transactions</div>
+                        <div class="branch-desc">거래 기능 개발</div>
+                    </div>
+                    <div class="branch-row">
+                        <div class="branch-name feature">feature/dashboard</div>
+                        <div class="branch-desc">대시보드 기능 개발</div>
+                    </div>
+                </div>
+
+                <div class="section-card">
+                    <h3>📝 커밋 메시지 규칙</h3>
+                    <div class="commit-type-grid">
+                        <div class="commit-type"><div class="commit-type-name">feat</div><div class="commit-type-desc">기능 추가</div></div>
+                        <div class="commit-type"><div class="commit-type-name">fix</div><div class="commit-type-desc">버그 수정</div></div>
+                        <div class="commit-type"><div class="commit-type-name">refactor</div><div class="commit-type-desc">구조 개선</div></div>
+                        <div class="commit-type"><div class="commit-type-name">docs</div><div class="commit-type-desc">문서 변경</div></div>
+                        <div class="commit-type"><div class="commit-type-name">test</div><div class="commit-type-desc">테스트 코드</div></div>
+                        <div class="commit-type"><div class="commit-type-name">chore</div><div class="commit-type-desc">잡작업/설정</div></div>
+                        <div class="commit-type"><div class="commit-type-name">style</div><div class="commit-type-desc">코드 스타일</div></div>
+                        <div class="commit-type"><div class="commit-type-name">deploy</div><div class="commit-type-desc">배포 관련</div></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Troubleshooting -->
+            <div>
+                <div style="font-size:15px;font-weight:700;margin-bottom:16px;">🔧 주요 이슈 해결 (TOP 3)</div>
+
+                <div class="trouble-card issue1">
+                    <div class="trouble-header">
+                        <div class="trouble-num n1">1</div>
+                        <div class="trouble-title">권한 누락 - 타 사용자 데이터 노출</div>
+                    </div>
+                    <div class="trouble-row"><span class="trouble-row-label">문제</span><span>URL 직접 입력 시 타 사용자 데이터 접근 가능</span></div>
+                    <div class="trouble-row"><span class="trouble-row-label">원인</span><span>객체 단위 접근 검증 누락</span></div>
+                    <div class="trouble-row"><span class="trouble-row-label">해결</span><span>get_queryset()에서 user 필터 + 404 처리</span></div>
+                </div>
+
+                <div class="trouble-card issue2">
+                    <div class="trouble-header">
+                        <div class="trouble-num n2">2</div>
+                        <div class="trouble-title">파일 업로드 경로 및 검증 오류</div>
+                    </div>
+                    <div class="trouble-row"><span class="trouble-row-label">문제</span><span>업로드 파일 저장 실패 / 경로 오류</span></div>
+                    <div class="trouble-row"><span class="trouble-row-label">원인</span><span>MEDIA_ROOT / MEDIA_URL 설정 누락</span></div>
+                    <div class="trouble-row"><span class="trouble-row-label">해결</span><span>Django MEDIA 설정 + 확장자/용량 검증</span></div>
+                </div>
+
+                <div class="trouble-card issue3">
+                    <div class="trouble-header">
+                        <div class="trouble-num n3">3</div>
+                        <div class="trouble-title">PostgreSQL 연결 / 마이그레이션 오류</div>
+                    </div>
+                    <div class="trouble-row"><span class="trouble-row-label">문제</span><span>migrate 실행 시 DB 연결 오류</span></div>
+                    <div class="trouble-row"><span class="trouble-row-label">원인</span><span>환경변수 누락 및 권한 설정 오류</span></div>
+                    <div class="trouble-row"><span class="trouble-row-label">해결</span><span>python-dotenv 기반 .env 환경변수 분리</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lessons Learned -->
+        <div class="section-card-full" style="margin-top:0; padding-top:20px; padding-bottom:20px;">
+            <h3>💡 배운 점</h3>
+            <div class="lesson-grid">
+                <div class="lesson-item">
+                    <div class="lesson-category">설계</div>
+                    <div class="lesson-text">데이터 소유 기준을<br>먼저 정해야 한다</div>
+                </div>
+                <div class="lesson-item">
+                    <div class="lesson-category">보안</div>
+                    <div class="lesson-text">로그인 ≠ 권한<br>객체 단위 검증 필수</div>
+                </div>
+                <div class="lesson-item">
+                    <div class="lesson-category">구현</div>
+                    <div class="lesson-text">파일 업로드는<br>검증/경로/용량 함께</div>
+                </div>
+                <div class="lesson-item">
+                    <div class="lesson-category">테스트</div>
+                    <div class="lesson-text">수동 테스트만으로<br>보안 이슈 놓치기 쉬움</div>
+                </div>
+                <div class="lesson-item">
+                    <div class="lesson-category">습관</div>
+                    <div class="lesson-text">환경 분리·문서화가<br>문제 해결을 빠르게</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Roadmap -->
+        <div class="section-card-full" style="margin-top:16px; padding-top:20px; padding-bottom:20px;">
+            <h3>🚀 개선 로드맵 (다음 단계)</h3>
+            <div class="roadmap-grid">
+                <div class="roadmap-item">
+                    <div class="roadmap-icon">🔌</div>
+                    <h4>DRF API 분리</h4>
+                    <p>프론트/백엔드 독립</p>
+                </div>
+                <div class="roadmap-item">
+                    <div class="roadmap-icon">🔐</div>
+                    <h4>JWT 인증</h4>
+                    <p>무상태 인증, 모바일 지원</p>
+                </div>
+                <div class="roadmap-item">
+                    <div class="roadmap-icon">⚛️</div>
+                    <h4>React SPA</h4>
+                    <p>UX 개선, 비동기 처리</p>
+                </div>
+                <div class="roadmap-item">
+                    <div class="roadmap-icon">📈</div>
+                    <h4>모니터링</h4>
+                    <p>Prometheus / Grafana</p>
+                </div>
+                <div class="roadmap-item">
+                    <div class="roadmap-icon">☁️</div>
+                    <h4>AWS S3</h4>
+                    <p>안정적 파일 관리</p>
+                </div>
+                <div class="roadmap-item">
+                    <div class="roadmap-icon">🔄</div>
+                    <h4>CI 강화</h4>
+                    <p>자동 테스트 + 품질 검사</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="slide-number">07 / 07</div>
+</div>
+
+</body>
+</html>
